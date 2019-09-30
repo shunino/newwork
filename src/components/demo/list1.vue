@@ -2,7 +2,7 @@
     <div class="mydemo">
       <div class="demo-head">
           <span class="ml10">专题展示</span>
-          <span class="mr10">更多</span>
+          <span class="mr10 pointer" @click="$commonGo('/show')">更多</span>
       </div>
       <div class="demo-content">
           <div  v-for="i in data1" class="demo-list">

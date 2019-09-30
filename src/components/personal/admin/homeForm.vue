@@ -13,69 +13,58 @@
     margin-top: 20px;
   }
 </style>
+<style>
+  .homeForm .el-dialog__body{
+      padding-top: 0px;
+  }
+  .homeForm .el-upload__tip{
+    margin-top: 30px;
+  }
+  .homeForm .el-dialog__header{
+    height: 0px;
+  }
+</style>
 <template>
-  <div>
-    home
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="完善信息" name="first" class="myfirst">
-        <div>
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="数据名称">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item  label="数据分类体系">
-              <el-select v-model="form.region" placeholder="请选择活动区域">
-                <el-option label="国家级" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="数据描述">
-              <el-input type="textarea" v-model="form.desc"></el-input>
-            </el-form-item>
+  <div class="homeForm">
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column
+        label="数据名称"
+        prop="name"
+      >
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleEdit(scope.$index, scope.row)">修改</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">新增</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="上传数据" name="second" class="myfirst">
-        <div>
-          <ul>
-            <li>请勿上传非法数据，否者后果自负;</li>
-            <li>上传的数据进过管理员审核;</li>
-            <li>审核通过后可以下载数据;</li>
-          </ul>
-        </div>
-        <div>
-          <el-button size="small" type="primary">上传</el-button>
-        </div>
-        <div style="">
-          <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column
-              label="文件名"
-              prop="name"
-            >
-            </el-table-column>
-            <el-table-column
-              label="文件大小"
-              prop="weight"
-            >
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="60%"
+      >
+      <div style="text-align: left">
+        <el-upload
+          class="upload-demo"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :file-list="fileList2"
+          list-type="picture">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,42 +72,40 @@
   export default {
     data() {
       return {
+        dialogVisible:false,
         activeName: 'first',
         tableData: [],
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+        },
+        fileList2: [
+          {name: 'food.jpeg', url: '../../../../static/1.jpg'},
+          {name: 'food2.jpeg', url: '../../../../static/1.jpg'}
+        ]
       };
     },
     created(){
-      let a = {
-        name: '贵州省水土流失预测成果（2019-2021）文档.word',
-        weight: '50M',
-      }
-      this.tableData.push(a);
-      for(let i=0;i<4;i++){
-        this.tableData.push(a);
-      }
+      this.tableData = [{
+        name: '轮播图',
+        type:'1'
+      }];
+      //this.tableData.push(a);
+      // for(let i=0;i<4;i++){
+      //   this.tableData.push(a);
+      // }
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
+      handleEdit(tab, event) {
+        this.dialogVisible = true;
       },
       onSubmit() {
         console.log('submit!');
       },
-      handleEdit(){
-
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
       },
-      handleDelete(){
-
+      handlePreview(file) {
+        console.log(file);
       }
     }
   };

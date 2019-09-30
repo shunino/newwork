@@ -12,6 +12,8 @@ import Intro from '@/pages/intro'
 
 import NewsDetail from '@/pages/newsDetail'
 import DatasDetail from '@/pages/datasDetail'
+import GardenDetail from '@/pages/gardenDetail'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -65,13 +67,20 @@ const router = new Router({
       path: '/DatasDetail',
       name: 'DatasDetail',
       component: DatasDetail
+    },
+    {
+      path: '/gardenDetail',
+      name: 'gardenDetail',
+      component: GardenDetail
     }
   ]
 })
 
 router.beforeEach((to,from,next)=>{
-  console.log(to);
-  console.log(from);
+  Vue.prototype.$token =  Vue.prototype.$getCookie('token');
+
+  Vue.prototype.$userId = Vue.prototype.$getCookie('userid');
+  console.log(Vue.prototype.$token,Vue.prototype.$userId);
   next();
 })
 export default router;

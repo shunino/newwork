@@ -5,41 +5,42 @@
 </style>
 <template>
     <div class="mynews">
-      <el-table
-        :data="tableData"
-        style="width: 100%">
-        <el-table-column
-          prop="title"
-          label="新闻标题"
+        <el-table
+          :data="tableData"
+          style="width: 100%;min-height: 700px;">
+          <el-table-column
+            label="新闻名称"
+            prop="title"
           >
-          <template slot-scope="scope">
-            <span class="pointer" @click="goto()">{{ scope.row.title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="editor"
-          label="作者"
+            <template slot-scope="scope">
+              <span class="pointer" @click="goto(scope.row)">{{scope.row.title}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="作者"
+            prop="author"
           >
-        </el-table-column>
-        <el-table-column
-          prop="date"
-          label="日期">
-        </el-table-column>
-        <el-table-column
-          prop="origin"
-          label="来源">
-        </el-table-column>
-      </el-table>
-      <div class="block mt10" style="text-align: left">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage1"
-          :page-size="100"
-          layout="total, prev, pager, next"
-          :total="1000">
-        </el-pagination>
-      </div>
+          </el-table-column>
+          <el-table-column
+            label="上传时间"
+            prop="createtime"
+          >
+          </el-table-column>
+          <el-table-column
+            label="来源"
+            prop="sources"
+          >
+          </el-table-column>
+        </el-table>
+        <div class="block mt10">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageno"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total=total>
+          </el-pagination>
+        </div>
     </div>
 </template>
 
@@ -48,33 +49,45 @@
     name: 'news',
     data() {
       return {
-        tableData: [],
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4
+        mysearch:{
+          userid: this.$userId,
+          searchKey: "",
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
+        total:1,
+        pageno: 1,
+        tableData: []
       }
     },
     mounted(){
-      let a = {
-        title: '.北斗定位系统和北斗地图的区别',
-        editor: '王小虎',
-        date: '2016-05-02',
-        origin:'人民日报'
-      };
-        for(let i=0;i<15;i++){
-          this.tableData.push(a);
-      }
+     this.getList();
     },
     methods: {
+      getList() {
+        this.$http.post('api/resshare/maintain/listNews',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
+        this.mysearch.pageno = val;
+        this.getList();
         console.log(`当前页: ${val}`);
       },
-      goto(){
-        this.$router.push({path:'/newsDetail'});
+      goto(row){
+        this.$router.push({path:'/newsDetail',query:{id:row.id}});
       }
     }
   }

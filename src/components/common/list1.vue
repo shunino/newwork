@@ -5,7 +5,6 @@
             <span class="span1"></span>
             <span class="span4">{{i.title}}}</span>
           </li>
-          <li style="margin-top: 19px;"><span @click="$commonGo('/datas')" v-show="data" class="fr mr10 pointer" style="color: gray">更多</span></li>
         </ul>
       </div>
 </template>
@@ -21,11 +20,6 @@
     },
     props: ['type','mydata'],
     created () {
-      if(this.type=='data'){
-        $('.list-li>span').css({'fontSize':'13px'});
-        $('.list-li .span1').css({'width':'4px','height':'4px','borderRadius':'50%'});
-        this.data=false;
-      }
     }
   }
 </script>
@@ -43,12 +37,12 @@
     margin-top: 7px;
   }
   .list-li>span{
-    font-size: 18px;
+    font-size: 13px;
     color: gray;
   }
   .list-li .span1{
-    width: 10px;
-    height: 10px;
+    width: 3px;
+    height: 3px;
     background: #828282;
   }
   .list-li .span4{

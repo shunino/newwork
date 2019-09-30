@@ -25,8 +25,8 @@
   }
 </style>
 <template>
-  <div class="commondiv">
-    <div class="new-detail ">
+  <div class="commondiv" :style="'minHeight:'+myheight">
+    <div v-show="is" class="new-detail ">
       <div class="detail-head">
         中国科学家领衔发现脉冲星自转状态突变导致星风云亮度变化
       </div>
@@ -71,6 +71,15 @@
         </div>
       </div>
     </div>
+
+    <div v-show="myis" class="new-detail ">
+      <div class="detail-head">
+       {{title}}
+      </div>
+      <div class="detail-content" id="newsDetailContent">
+
+      </div>
+    </div>
   </div>
 </template>
 
@@ -79,7 +88,35 @@
     name: 'rank',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        msg: 'Welcome to Your Vue.js App',
+        title:'',
+        is:false,
+        myis:true,
+        contents:'',
+        myheight:'auto',
+      }
+    },
+    mounted () {
+      let win =  window.innerHeight;
+      let he = win - 260 +'px';
+      this.myheight = he;
+      console.log('rrr');
+      console.log(this.$route.query);
+      if(this.$route.query.id){
+        this.getDetail(this.$route.query.id);
+      } else{
+        this.is=true;
+        this.myis = false;
+      }
+    },
+    methods:{
+      getDetail(id){
+        this.$http.post('api/resshare/maintain/getNews',{id:id,token:this.$token}).then(res => {
+            this.title = res.data.data.title;
+            $('#newsDetailContent').html(res.data.data.contents);
+        }).catch(err => {
+          console.log(err)
+        })
       }
     }
   }

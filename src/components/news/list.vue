@@ -10,7 +10,7 @@
             <span class="span4 ml10">{{i.title}}</span>
           </li>
         </ul>
-        <div class="fr">更多新闻</div>
+        <div class="fr pointer" @click="$commonGo('/news')">更多新闻</div>
       </div>
     </div>
 </template>

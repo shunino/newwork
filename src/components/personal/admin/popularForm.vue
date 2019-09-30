@@ -19,14 +19,14 @@
       <el-tab-pane label="数据上传" name="first" class="myfirst">
         <div>
           <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="专题类别">
-              <el-select v-model="form.region" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="图片名称">
+            <el-form-item label="新闻名称">
               <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="作者">
+              <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item  label="数据详情">
+                <richtxt ></richtxt>
             </el-form-item>
             <el-form-item label="图片" style="margin-top: 60px;">
               <el-upload
@@ -53,18 +53,23 @@
             :data="tableData"
             style="width: 100%">
             <el-table-column
-              label="数据名称"
+              label="新闻名称"
               prop="name"
             >
             </el-table-column>
             <el-table-column
-              label="数据大小"
+              label="作者"
               prop="editor"
             >
             </el-table-column>
             <el-table-column
               label="上传时间"
               prop="time"
+            >
+            </el-table-column>
+            <el-table-column
+              label="来源"
+              prop="origin"
             >
             </el-table-column>
             <el-table-column label="操作">
@@ -106,7 +111,7 @@
     created(){
       let a = {
         name: '新闻',
-        editor: '50M',
+        editor: '张三',
         time: '2019-25-05',
         origin: '中国日报',
       }

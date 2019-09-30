@@ -35,7 +35,7 @@
       <div class="po-head">科技推广</div>
       <div class="po-list mt20">
         <ul>
-          <li @click="goto()" v-for="i in 25">
+          <li class="pointer" @click="goto()" v-for="i in 25">
             <div style="display: flex;align-items: center">
               <span class="pot ml10 mr10"></span>
               <span>北斗系统对于国家的战略意义远胜民用导航的意义</span>

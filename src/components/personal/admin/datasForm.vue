@@ -13,69 +13,79 @@
     margin-top: 20px;
   }
 </style>
+<style>
+  .homeForm .el-dialog__body{
+    padding-top: 0px;
+  }
+  .homeForm .el-dialog__header{
+    height: 0px;
+  }
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+</style>
 <template>
-  <div>
-    datas
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="完善信息" name="first" class="myfirst">
-        <div>
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="数据名称">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item  label="数据分类体系">
-              <el-select v-model="form.region" placeholder="请选择活动区域">
-                <el-option label="国家级" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="数据描述">
-              <el-input type="textarea" v-model="form.desc"></el-input>
-            </el-form-item>
+  <div class="homeForm">
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column
+        label="数据名称"
+        prop="name"
+      >
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleEdit(scope.$index, scope.row)">修改</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">新增</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="上传数据" name="second" class="myfirst">
-        <div>
-          <ul>
-            <li>请勿上传非法数据，否者后果自负;</li>
-            <li>上传的数据进过管理员审核;</li>
-            <li>审核通过后可以下载数据;</li>
-          </ul>
-        </div>
-        <div>
-          <el-button size="small" type="primary">上传</el-button>
-        </div>
-        <div style="">
-          <el-table
-            :data="tableData"
-            style="width: 100%">
-            <el-table-column
-              label="文件名"
-              prop="name"
-            >
-            </el-table-column>
-            <el-table-column
-              label="文件大小"
-              prop="weight"
-            >
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="60%"
+    >
+      <div style="text-align: left">
+        <el-tag
+          :key="tag"
+          v-for="tag in dynamicTags"
+          closable
+          :disable-transitions="false"
+          @close="handleClose(tag)">
+          {{tag}}
+        </el-tag>
+        <el-input
+          class="input-new-tag"
+          v-if="inputVisible"
+          v-model="inputValue"
+          ref="saveTagInput"
+          size="small"
+          @keyup.enter.native="handleInputConfirm"
+          @blur="handleInputConfirm"
+        >
+        </el-input>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput">添加</el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -83,39 +93,65 @@
   export default {
     data() {
       return {
+        dynamicTags: ['标签一', '标签二', '标签三'],
+        inputVisible: false,
+        inputValue: '',
+        dialogVisible:false,
         activeName: 'first',
         tableData: [],
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
         }
       };
     },
     created(){
-      let a = {
-        name: '贵州省水土流失预测成果（2019-2021）文档.word',
-        weight: '50M',
-      }
-      this.tableData.push(a);
-      for(let i=0;i<4;i++){
-        this.tableData.push(a);
-      }
+      this.tableData = [
+        {
+          name: '数据分类体系',
+          type:'1'
+        },
+        {
+          name: '主题词1',
+          type:'2'
+        },
+        {
+          name: '主题词2',
+          type:'3'
+        },
+      ];
+      //this.tableData.push(a);
+      // for(let i=0;i<4;i++){
+      //   this.tableData.push(a);
+      // }
     },
     methods: {
+      handleClose(tag) {
+        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+      },
+
+      showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+
+      handleInputConfirm() {
+        let inputValue = this.inputValue;
+        if (inputValue) {
+          this.dynamicTags.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.inputValue = '';
+      },
+      handleEdit(tab, event) {
+        this.dialogVisible = true;
+      },
       handleClick(tab, event) {
         console.log(tab, event);
       },
       onSubmit() {
         console.log('submit!');
-      },
-      handleEdit(){
-
       },
       handleDelete(){
 

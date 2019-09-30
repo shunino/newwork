@@ -3,8 +3,8 @@
     <div style="width: 95%;margin-top: 30px;">
       <div style="display: flex;">
         <mymap style="width: 39%;"></mymap>
-        <div style="width: 60%;margin-left: 1%;height: 100%;margin-top: 40px;">
-          <myimg style="width: 100%;height: 145px;margin-bottom: 10px;" ></myimg>
+        <div style="width: 60%;margin-left: 1%;height: 100%;margin-top: 40px;" >
+          <myimg  style="width: 100%;height: 145px;margin-bottom: 10px;" ></myimg>
           <myimg style="width: 100%;height: 145px" ></myimg>
         </div>
       </div>

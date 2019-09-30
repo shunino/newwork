@@ -3,7 +3,7 @@
   width: 100%;
   display: flex;
   margin-top: 20px;
-  height: 800px;
+  min-height: 800px;
 }
 .per-left{
   width: 200px;
@@ -50,15 +50,17 @@
          </div>
           <div class="per-menu">
               <ul>
-                <li  id="perHome" @click="changTab('perHome')">首页管理</li>
-                <li  id="perNews" @click="changTab('perNews')">新闻动态</li>
-                <li  id="perDatas" @click="changTab('perDatas')">数据中心</li>
-                <li  id="perDemo" @click="changTab('perDemo')">专题展示</li>
-                <li class="cur" id="perShare" @click="changTab('perShare')">我的共享</li>
-                <li id="perReposit" @click="changTab('perReposit')">我的收藏</li>
-                <li id="perDown" @click="changTab('perDown')">下载历史</li>
-                <li id="perIntro" @click="changTab('perIntro')">个人资料</li>
-                <li id="perGarden" @click="changTab('perGarden')" style="border-bottom: none">示范园区</li>
+                <li v-show="isAdmin"  id="perHome" @click="changTab('perHome')">首页管理</li>
+                <li v-show="isAdmin"  id="perNews" @click="changTab('perNews')">新闻动态</li>
+                <li v-show="isAdmin"  id="perDatas" @click="changTab('perDatas')">数据中心</li>
+                <li v-show="isAdmin"  id="perDemo" @click="changTab('perDemo')">专题展示</li>
+                <li v-show="isAdmin" id="perGarden" @click="changTab('perGarden')" style="border-bottom: none">示范园区</li>
+                <li v-show="isAdmin" id="perPop" @click="changTab('perPop')" style="border-bottom: none">科技推广</li>
+
+                <li v-show="isUser" class="cur" id="perShare" @click="changTab('perShare')">我的共享</li>
+                <li v-show="isUser" id="perReposit" @click="changTab('perReposit')">我的收藏</li>
+                <li v-show="isUser" id="perDown" @click="changTab('perDown')">下载历史</li>
+                <li v-show="isUser" id="perIntro" @click="changTab('perIntro')">个人资料</li>
               </ul>
           </div>
         </div>
@@ -74,6 +76,7 @@
           <demoForm v-if="tabtype=='perDemo'" class="perDemo perCom"></demoForm>
           <datasForm v-if="tabtype=='perDatas'" class="perDatas perCom"></datasForm>
           <newsForm v-if="tabtype=='perNews'" class="perNews perCom"></newsForm>
+          <popForm v-if="tabtype=='perPop'" class="perPop perCom"></popForm>
           <!-- 内部组件  -->
           <shareForm v-if="tabtype=='shareForm'"></shareForm>
       </div>
@@ -97,15 +100,33 @@ import HomeForm  from '@/components/personal/admin/homeForm'
 import DemoForm  from '@/components/personal/admin/demoForm'
 import DatasForm  from '@/components/personal/admin/datasForm'
 import NewsForm  from '@/components/personal/admin/newsForm'
-
+import PopForm  from '@/components/personal/admin/popularForm'
 export default {
   name: 'Home',
   data () {
     return {
-      tabtype:'perShare'
+      tabtype:'perShare',
+      isAdmin:true,
+      isUser:true,
     }
   },
   mounted(){
+    var user = this.$getCookie('username');
+    if(user=='admin'){
+      this.isAdmin = true;
+      this.isUser = false;
+      let tab = 'perHome';
+      $('.per-menu').find('ul li').removeClass('cur');
+      $('#'+tab).addClass('cur');
+      console.log(tab);
+      this.tabtype = tab;
+    } else if(user=='shu'){
+      this.isAdmin = true;
+      this.isUser = true;
+    } else{
+      this.isAdmin = false;
+      this.isUser = true;
+    }
     $('.head-left').find('span').removeClass('cur');
     $('#personal').addClass('cur');
   },
@@ -134,6 +155,7 @@ export default {
     'demoForm':DemoForm,
     'datasForm':DatasForm,
     'newsForm':NewsForm,
+    'popForm':PopForm
   }
 }
 </script>

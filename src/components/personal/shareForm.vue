@@ -22,7 +22,7 @@
             <el-form-item label="数据名称">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item  label="数据分类体系">
+            <el-form-item  label="分类体系">
               <el-select v-model="form.region" placeholder="请选择活动区域">
                 <el-option label="国家级" value="shanghai"></el-option>
                 <el-option label="区域二" value="beijing"></el-option>

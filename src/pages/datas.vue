@@ -28,9 +28,9 @@
           </div>
           <div class="left-bottom mt10">
               <div class="bottom-head">
-                奔雷数据热度排行榜
+                本类数据热度排行榜
               </div>
-            <commonList type="data"></commonList>
+            <commonList :mydata="data1" type="data"></commonList>
           </div>
         </div>
         <div class="da-center" >
@@ -60,7 +60,7 @@
 
   import DemoList from '@/components/demo/list'
 
-  import CommonList from '@/components/common/list'
+  import CommonList from '@/components/common/list1'
 
   import DataItem from '@/components/datas/item'
   import DataTag from '@/components/datas/tag'
@@ -70,10 +70,53 @@
     name: 'Home',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        msg: 'Welcome to Your Vue.js App',
+        data1:[],
       }
     },
     mounted(){
+      this.data1 =[
+        {
+          title:'贵州省1km分辨率NDVI数据集（2001-2010年）',
+          date:'2019-09-24',
+        },
+        {
+          title:'云贵丘陵沟壑区主要植物及种子相关特征数据集（2003-2015年）',
+          date:'2019-09-22',
+        },
+        {
+          title:'土壤侵蚀模型地形因子计算工具（2.0版）（2000年）',
+          date:'2019-09-21',
+        },
+        {
+          title:'中国北方地区沙漠化治理区划图（1981年）“眼睛”观测研究太阳活动',
+          date:'2019-09-12',
+        },
+        {
+          title:'云贵高原90米分辨率坡度图',
+          date:'2019-09-08',
+        },
+        {
+          title:'云贵高原90米分辨率LS因子图(2012年）',
+          date:'2019-09-06',
+        },
+        {
+          title:'研究发现目前已知全球最深海底泥火山',
+          date:'2019-09-01',
+        },
+        {
+          title:'国科学家赴北极研究气候变化',
+          date:'2019-09-01',
+        },
+        {
+          title:'美国调查报告：中国正在打赢治理空气污染的战争 不详 2018/03/16 08:58新华网',
+          date:'2019-09-01',
+        },
+        {
+          title:'国家大数据综合试验区有望开建 侯云龙 2018/03/07 09:14经济参考报',
+          date:'2019-09-01',
+        },
+      ];
       $('.head-left').find('span').removeClass('cur');
       $('#datas').addClass('cur');
     },

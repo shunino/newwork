@@ -18,7 +18,7 @@
 
 </style>
 <template>
-  <div class="ga-img">
+  <div class="ga-img pointer" @click="$commonGo('/gardenDetail')">
      <div class="img-box">
        <img style="width:100%;height:100%;" src="../../../static/site.jpg">
      </div>

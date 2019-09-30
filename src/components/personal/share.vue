@@ -62,7 +62,7 @@
                 dfdsfdsfdsfdsfdsfs
               </div>
               <div>
-                <span>dsfdsfdsfx需要<b>1</b>积分</span>
+                <span>由 <b>蒙杨</b> 分享，下载需要 <b style="color: red;">1</b> 积分，已经下载 <b>0</b> 次</span>
                 <span>
                     <el-button size="mini" round>删除共享</el-button>
                   <el-button size="mini" round>查看</el-button>

@@ -15,34 +15,37 @@
 </style>
 <template>
   <div>
+    <div id="csmy">
+
+    </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="新闻上传" name="first" class="myfirst">
         <div>
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="新闻名称">
-              <el-input v-model="form.name"></el-input>
+          <el-form :rules="rules" ref="form" :model="form" label-width="80px">
+            <el-form-item label="新闻名称" prop="title">
+              <el-input v-model="form.title"></el-input>
             </el-form-item>
-            <el-form-item label="作者">
-              <el-input v-model="form.name"></el-input>
+            <el-form-item label="作者" prop="author">
+              <el-input v-model="form.author"></el-input>
             </el-form-item>
             <el-form-item label="来源">
-              <el-input v-model="form.name"></el-input>
+              <el-input v-model="form.sources"></el-input>
             </el-form-item>
             <el-form-item  label="新闻详情">
-                <richtxt ></richtxt>
+                <richtxt @toClick="getContent" ></richtxt>
             </el-form-item>
-            <el-form-item label="图片" style="margin-top: 60px;">
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove">
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
-            </el-form-item>
+<!--            <el-form-item label="图片" style="margin-top: 60px;">-->
+<!--              <el-upload-->
+<!--                action="http://222.85.224.95:9090/upload"-->
+<!--                list-type="picture-card"-->
+<!--                :on-preview="handlePictureCardPreview"-->
+<!--                :on-remove="handleRemove">-->
+<!--                <i class="el-icon-plus"></i>-->
+<!--              </el-upload>-->
+<!--              <el-dialog :visible.sync="dialogVisible" size="tiny">-->
+<!--                <img width="100%" :src="dialogImageUrl" alt="">-->
+<!--              </el-dialog>-->
+<!--            </el-form-item>-->
 
             <el-form-item>
               <el-button type="primary" @click="onSubmit">新增</el-button>
@@ -51,28 +54,27 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="新闻列表" name="second" class="myfirst">
-        <div style="">
           <el-table
             :data="tableData"
-            style="width: 100%">
+            style="width: 100%;min-height: 700px;">
             <el-table-column
               label="新闻名称"
-              prop="name"
+              prop="title"
             >
             </el-table-column>
             <el-table-column
               label="作者"
-              prop="editor"
+              prop="author"
             >
             </el-table-column>
             <el-table-column
               label="上传时间"
-              prop="time"
+              prop="createtime"
             >
             </el-table-column>
             <el-table-column
               label="来源"
-              prop="origin"
+              prop="sources"
             >
             </el-table-column>
             <el-table-column label="操作">
@@ -80,11 +82,19 @@
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                  @click="handleDelete(scope.row.id)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
-        </div>
+          <div class="block mt10">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="pageno"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total=total>
+            </el-pagination>
+          </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -95,53 +105,97 @@
   export default {
     data() {
       return {
+        mysearch:{
+          userid: this.$userId,
+          searchKey: "",
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
+        total:1,
+        pageno: 1,
+        tableData: [],
         dialogImageUrl: '',
         dialogVisible: false,
         activeName: 'first',
-        tableData: [],
         form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+          title: '',
+          contents: '',
+          contenttype: '2',
+          author: '',
+          sources: '',
+          userid:this.$userId,
+          token:this.$token
+        },
+        rules:{
+          title: [
+            { required: true, message: '请输入标题名', trigger: 'blur' },
+          ],
+          author: [
+            { required: true, message: '请输入作者名', trigger: 'blur' },
+          ],
+        },
       };
     },
     created(){
-      let a = {
-        name: '新闻',
-        editor: '张三',
-        time: '2019-25-05',
-        origin: '中国日报',
-      }
-      this.tableData.push(a);
-      for(let i=0;i<4;i++){
-        this.tableData.push(a);
-      }
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
+      getContent(html) {
+       this.form.contents = html;
       },
       onSubmit() {
-        console.log('submit!');
+        let self = this;
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            self.$http.post('api/resshare/maintain/addOrUpdateNews',{ "news":self.form,token:this.$token}).then(res => {
+              self.$alert('添加成功!', '操作', {
+                confirmButtonText: '确定',
+              });
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
       },
-      handleEdit(){
-
+      getList() {
+        this.$http.post('api/resshare/maintain/listNews',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
       },
-      handleDelete(){
-
+      handleDelete(id){
+        let mysearch = {
+          id:id,
+          token:this.$token
+        }
+        this.$http.post('api/resshare/maintain/deleteNews',mysearch).then(res => {
+          this.$alert('删除成功！', {
+            confirmButtonText: '确定',
+          });
+          this.getList();
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
       },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
+      handleClick(tab, event) {
+        this.getList();
       },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.mysearch.pageno = val;
+        this.getList();
+        console.log(`当前页: ${val}`);
       }
     },
     components: {

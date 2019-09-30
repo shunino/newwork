@@ -62,7 +62,7 @@
            repositrepositrepositrepositrepositreposit
           </div>
           <div>
-            <span>dsfdsfdsfx需要<b>1</b>积分</span>
+            <span>由 <b>张飞</b> 分享，下载需要 <b style="color: red;">2</b> 积分，已经下载 <b>1</b> 次</span>
             <span>
                     <el-button size="mini" round>取消收藏</el-button>
                   <el-button size="mini" round>查看</el-button>

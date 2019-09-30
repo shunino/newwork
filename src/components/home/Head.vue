@@ -24,6 +24,9 @@
                 </span>
               </div>
               <div class="head-left" v-show="hasLogin">
+                <span style="justify-content: flex-end;margin-right: 5px;">
+                  Hi！{{user}}
+                </span>
                 <span id="personal">
                   <router-link to="/personal">个人中心</router-link>
                 </span>
@@ -45,15 +48,15 @@
             width="40%"
               >
             <div>
-              <el-form :model="ruleForm1" :rules="rule1" ref="ruleForm1"  label-width="80px">
-                <el-form-item label="登录名"  prop="pwd">
-                  <el-input v-model="ruleForm1.name"></el-input>
+              <el-form :model="ruleForm1" :rules="rules1" ref="ruleForm1"  label-width="80px">
+                <el-form-item label="登录名"  prop="username">
+                  <el-input v-model="ruleForm1.username"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="pwd">
-                  <el-input type="password" v-model="ruleForm1.pwd"></el-input>
+                <el-form-item label="密码" prop="password">
+                  <el-input type="password" v-model="ruleForm1.password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button  type="primary" @click="login">登录</el-button>
+                  <el-button  type="primary" @click="login()">登录</el-button>
                   <el-button  @click="dialogVisible = false">取消</el-button>
                 </el-form-item>
               </el-form>
@@ -111,16 +114,20 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      user:'',
       dialogVisible:false,
       dialogVisible1:false,
       hasLogin:false,
       ruleForm1:{
-        name:'',
-        pwd:''
       },
-      rules1:[
-
-      ],
+      rules1:{
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+        ],
+      },
       ruleForm2:{},
       rules2:{
         username: [
@@ -140,6 +147,16 @@ export default {
         ],
       },
     }
+  },
+  mounted(){
+    let user = this.$getCookie('username');
+    if(user){
+      this.hasLogin = true;
+      this.dialogVisible = false;
+      this.user = this.$getCookie('username');
+    }
+    $('.head-left').find('span').removeClass('cur');
+    $('#personal').addClass('cur');
   },
   methods:{
     validatePass(rule, value, callback){
@@ -175,10 +192,37 @@ export default {
     toRegister(){
       this.dialogVisible1 = true;
     },
-    login(){
-        this.hasLogin = true;
-        this.dialogVisible = false;
-        this.$router.push({path:'/personal'});
+    login(name,pwd){
+      // this.$setCookie('username','shu','55');
+      // this.hasLogin = true;
+      // this.dialogVisible = false;
+      // this.$router.push({path:'/personal'});
+      // this.user = this.$getCookie('username');
+      let self =this;
+      if(!name){
+        name = this.ruleForm1.username;
+      }
+      if(!pwd){
+        pwd = this.ruleForm1.password;;
+      }
+      this.$refs['ruleForm1'].validate((valid) => {
+        //debugger;
+        if (valid) {
+          self.$http.post('api/resshare/user/login',{ "username":name,"password":pwd}).then(res => {
+            self.$setCookie('username',res.data.data.username,'55');
+            self.$setCookie('userid',res.data.data.userid,'55');
+            self.$setCookie('token',res.data.data.token,'55');
+            self.hasLogin = true;
+            self.dialogVisible1 = false;
+            self.dialogVisible = false;
+            self.user = this.$getCookie('username');
+            self.$router.push({path:'/personal'});
+            console.log(res);
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      });
     },
     register(){
       var self = this;
@@ -188,8 +232,7 @@ export default {
           self.$http.post('api/resshare/user/registryUser',{
             user:self.ruleForm2,
           }).then(res => {
-            // self.hasLogin = true;
-            // self.dialogVisible1 = false;
+            self.login(self.ruleForm2.username,self.ruleForm2.password)
             console.log(res);
           }).catch(err => {
             console.log(err)
@@ -198,6 +241,9 @@ export default {
       });
     },
     lexit(){
+      this.$setCookie('username','','-1');
+      this.$setCookie('userid','','-1');
+      this.$setCookie('token','','-1');
       this.hasLogin = false;
       this.$router.push({path:'/'})
     }
