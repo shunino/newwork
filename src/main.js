@@ -10,6 +10,10 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueQuillEditor from 'vue-quill-editor'
 
 import axios from 'axios'
+
+//通用常量
+Vue.prototype.$URL='http://222.85.224.95:9090'
+
 Vue.prototype.$http=axios
 //设置cookie
 Vue.prototype.$setCookie = function (cname, cvalue, exdays) {

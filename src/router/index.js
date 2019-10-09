@@ -11,6 +11,7 @@ import Popular from '@/pages/popular'
 import Intro from '@/pages/intro'
 
 import NewsDetail from '@/pages/newsDetail'
+import PopularDetail from '@/pages/popularDetail'
 import DatasDetail from '@/pages/datasDetail'
 import GardenDetail from '@/pages/gardenDetail'
 
@@ -49,6 +50,11 @@ const router = new Router({
       component: Garden
     },
     {
+      path: '/popularDetail',
+      name: 'PopularDetail',
+      component: PopularDetail
+    },
+    {
       path: '/popular',
       name: 'popular',
       component: Popular
@@ -78,7 +84,6 @@ const router = new Router({
 
 router.beforeEach((to,from,next)=>{
   Vue.prototype.$token =  Vue.prototype.$getCookie('token');
-
   Vue.prototype.$userId = Vue.prototype.$getCookie('userid');
   console.log(Vue.prototype.$token,Vue.prototype.$userId);
   next();

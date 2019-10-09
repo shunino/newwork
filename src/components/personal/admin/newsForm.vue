@@ -32,7 +32,7 @@
               <el-input v-model="form.sources"></el-input>
             </el-form-item>
             <el-form-item  label="新闻详情">
-                <richtxt @toClick="getContent" ></richtxt>
+                <richtxt ref="myrich" @toClick="getContent" ></richtxt>
             </el-form-item>
 <!--            <el-form-item label="图片" style="margin-top: 60px;">-->
 <!--              <el-upload-->
@@ -83,6 +83,12 @@
                   size="mini"
                   type="danger"
                   @click="handleDelete(scope.row.id)">删除</el-button>
+
+                <el-button
+                  size="mini"
+                  type="primary"
+                  style="display: none"
+                  @click="handleEdit(scope.row)">修改</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -115,8 +121,6 @@
         total:1,
         pageno: 1,
         tableData: [],
-        dialogImageUrl: '',
-        dialogVisible: false,
         activeName: 'first',
         form: {
           title: '',
@@ -125,7 +129,8 @@
           author: '',
           sources: '',
           userid:this.$userId,
-          token:this.$token
+          token:this.$token,
+          id:null
         },
         rules:{
           title: [
@@ -148,9 +153,18 @@
         this.$refs['form'].validate((valid) => {
           if (valid) {
             self.$http.post('api/resshare/maintain/addOrUpdateNews',{ "news":self.form,token:this.$token}).then(res => {
-              self.$alert('添加成功!', '操作', {
+              self.$alert('操作成功!', '操作', {
                 confirmButtonText: '确定',
+                callback: action => {
+                  this.activeName='second';
+                  this.getList();
+                }
               });
+              this.form.contents = '';
+              this.form.title = '';
+              this.form.author = '';
+              this.form.sources = '';
+              this.$refs.myrich.clearContent();
               console.log(res);
             }).catch(err => {
               console.log(err)
@@ -177,16 +191,36 @@
           token:this.$token
         }
         this.$http.post('api/resshare/maintain/deleteNews',mysearch).then(res => {
-          this.$alert('删除成功！', {
+          this.$alert('确定删除？', '确定', {
             confirmButtonText: '确定',
+            callback: action => {
+              this.getList();
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
+            }
           });
-          this.getList();
           console.log(res);
         }).catch(err => {
           console.log(err)
         })
       },
+      handleEdit(row){
+          this.form.title = row.title;
+          this.form.author = row.author;
+          this.form.sources = row.sources;
+          this.form.id = row.id;
+          this.$refs.myrich.init(row.contents);
+          this.activeName='first';
+      },
       handleClick(tab, event) {
+        this.form.contents = '';
+        this.form.title = '';
+        this.form.author = '';
+        this.form.sources = '';
+        this.$refs.myrich.clearContent();
+        this.form.id = null;
         this.getList();
       },
       handleSizeChange(val) {

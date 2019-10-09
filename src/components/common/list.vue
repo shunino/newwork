@@ -1,7 +1,7 @@
 <template>
       <div class="list-content">
         <ul class="list-ul" style="overflow:auto">
-          <li v-for="i in mydata" class="list-li">
+          <li v-for="i in mydata" class="list-li" @click="$commonGo('/DatasDetail')">
             <span class="span1"></span>
             <span class="span4">{{i.title}}}</span>
           </li>
@@ -22,6 +22,7 @@
     props: ['type','mydata'],
     created () {
       if(this.type=='data'){
+
         $('.list-li>span').css({'fontSize':'13px'});
         $('.list-li .span1').css({'width':'4px','height':'4px','borderRadius':'50%'});
         this.data=false;
@@ -34,13 +35,14 @@
 <style scoped>
   .list-content{
     width: 100%;
-    height: 100% ;
+    height: 100%;
   }
   .list-li{
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 7px;
+    cursor: pointer;
   }
   .list-li>span{
     font-size: 18px;

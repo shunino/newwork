@@ -13,32 +13,69 @@
     margin-top: 20px;
   }
 </style>
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>
 <template>
   <div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="数据上传" name="first" class="myfirst">
+      <el-tab-pane label="专题上传" name="first" class="myfirst">
         <div>
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="专题类别">
-              <el-select v-model="form.region" placeholder="请选择">
-                <el-option label="区域一" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+            <el-form-item label="专题类别" prop="typeflag">
+              <el-select v-model="form.typeflag" placeholder="请选择">
+                <el-option label="大数据专题" value="1"></el-option>
+                <el-option label="预防监督专题" value="2"></el-option>
+                <el-option label="综合治理专题" value="3"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="图片名称">
+            <el-form-item label="专题名称" prop="name">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="图片" style="margin-top: 60px;">
+            <el-form-item label="图片" style="margin-top: 60px;" prop="cover">
               <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove">
-                <i class="el-icon-plus"></i>
+                class="avatar-uploader"
+                :action="$URL+'/upload'"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              <el-dialog :visible.sync="dialogVisible" size="tiny">
-                <img width="100%" :src="dialogImageUrl" alt="">
-              </el-dialog>
+<!--              <el-upload-->
+<!--                :action="$URL+'/upload'"-->
+<!--                list-type="picture-card"-->
+<!--                :on-preview="handlePictureCardPreview"-->
+<!--                :on-remove="handleRemove"-->
+<!--                :limit=1-->
+<!--              >-->
+<!--                <i  class="el-icon-plus"></i>-->
+<!--              </el-upload>-->
+<!--              <el-dialog :visible.sync="dialogVisible" size="tiny">-->
+<!--                <img width="100%" :src="dialogImageUrl" alt="">-->
+<!--              </el-dialog>-->
             </el-form-item>
 
             <el-form-item>
@@ -53,18 +90,13 @@
             :data="tableData"
             style="width: 100%">
             <el-table-column
-              label="数据名称"
+              label="专题名称"
               prop="name"
             >
             </el-table-column>
             <el-table-column
-              label="数据大小"
-              prop="editor"
-            >
-            </el-table-column>
-            <el-table-column
               label="上传时间"
-              prop="time"
+              prop="createtime"
             >
             </el-table-column>
             <el-table-column label="操作">
@@ -72,7 +104,7 @@
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                  @click="handleDelete(scope.row.id)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -87,20 +119,37 @@
   export default {
     data() {
       return {
+        mysearch:{
+          userid: this.$userId,
+          searchKey: "",
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
+        total:1,
+        pageno: 1,
         dialogImageUrl: '',
         dialogVisible: false,
         activeName: 'first',
         tableData: [],
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+          typeflag: '',
+          cover: '',
+          userid:this.$userId,
+          id:null
+        },
+        rules:{
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' },
+          ],
+          typeflag: [
+            { required: true, message: '请选择类型', trigger: 'blur' },
+          ],
+          cover: [
+            { required: true, message: '请上传图片', trigger: 'blur' },
+          ],
+        },
       };
     },
     created(){
@@ -116,24 +165,107 @@
       }
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
+      getContent(html) {
+        this.form.contents = html;
       },
       onSubmit() {
-        console.log('submit!');
+        let self = this;
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            self.form.typeflag = self.form.typeflag/1;
+            self.$http.post('api/resshare/maintain/addOrUpdateSpecial',{ "special":self.form,token:this.$token}).then(res => {
+              self.$alert('操作成功!', '操作', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.activeName='second';
+                  this.getList();
+                }
+              });
+              this.form.name = '';
+              this.form.typeflag = '';
+              this.form.cover = '';
+              this.dialogImageUrl = '';
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
       },
-      handleEdit(){
-
+      getList() {
+        this.$http.post('api/resshare/maintain/listSpecial',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
       },
-      handleDelete(){
-
+      handleDelete(id){
+        let mysearch = {
+          id:id,
+          token:this.$token
+        }
+        this.$http.post('api/resshare/maintain/deleteSpecial',mysearch).then(res => {
+          this.$alert('确定删除？', '确定', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.getList();
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
+            }
+          });
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
       },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
+      handleEdit(row){
+        // this.form.title = row.title;
+        // this.form.author = row.author;
+        // this.form.sources = row.sources;
+        // this.form.id = row.id;
+        // this.$refs.myrich.init(row.contents);
+        // this.activeName='first';
       },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+      handleClick(tab, event) {
+        this.form.name = '';
+        this.form.typeflag = '';
+        this.form.cover = '';
+        this.dialogImageUrl = '';
+        this.form.id = null;
+        this.getList();
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.mysearch.pageno = val;
+        this.getList();
+        console.log(`当前页: ${val}`);
+      },
+      handleAvatarSuccess(res, file) {
+        //debugger;
+        this.form.cover = res.data.fileid;
+        this.dialogImageUrl = URL.createObjectURL(file.raw);
+      },
+      beforeAvatarUpload(file) {
+        // const isJPG = file.type === 'image/jpeg';
+        // const isLt2M = file.size / 1024 / 1024 < 2;
+        //
+        // if (!isJPG) {
+        //   this.$message.error('上传头像图片只能是 JPG 格式!');
+        // }
+        // if (!isLt2M) {
+        //   this.$message.error('上传头像图片大小不能超过 2MB!');
+        // }
+        // return isJPG && isLt2M;
       }
     },
     components: {

@@ -1,56 +1,60 @@
 <template>
   <div class="commondiv">
     <div style="width: 95%;margin-top: 10px;">
-      <demoList title="大数据专题"></demoList>
-      <demoList title="预防监督专题" class="mt20"></demoList>
-      <demoList title="综合治理专题" class="mt20"></demoList>
+      <demoList :mydata="tableData1" title="大数据专题"></demoList>
+      <demoList :mydata="tableData2" title="预防监督专题" class="mt20"></demoList>
+      <demoList :mydata="tableData3" title="综合治理专题" class="mt20"></demoList>
     </div>
   </div>
 </template>
 
 <script>
-  import Head from '@/components/home/Head'
-  import Carousel from '@/components/home/carousel'
-  import Rank from '@/components/home/rank'
-  import Footer from '@/components/home/footer'
-
-  import Table from '@/components/news/table'
-  import List from '@/components/news/list'
-  import NewDetail from '@/components/news/detail'
-
   import DemoList from '@/components/demo/list'
-
-  import CommonList from '@/components/common/list'
-
-  import DataItem from '@/components/datas/item'
-  import DataTag from '@/components/datas/tag'
-  import DataClass from '@/components/datas/class'
-  import DataItemHead from '@/components/datas/itemHead'
   export default {
     name: 'Home',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        mysearch:{
+          userid: this.$userId,
+          searchKey: "",
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
+        total:1,
+        pageno: 1,
+        tableData1:[],
+        tableData2:[],
+        tableData3:[]
       }
     },
     mounted(){
       $('.head-left').find('span').removeClass('cur');
       $('#show').addClass('cur');
+      this.getList();
+    },
+    methods:{
+      getList() {
+        this.$http.post('api/resshare/maintain/listSpecial',this.mysearch).then(res => {
+          let tableData = res.data.data.data;
+          for(let i in tableData ){
+            tableData[i].createtime = tableData[i].createtime.split('T')[0];
+            if(tableData[i].typeflag=='1'){
+              this.tableData1.push(tableData[i]);
+            } else if(tableData[i].typeflag=='2'){
+              this.tableData2.push(tableData[i]);
+            } else{
+              this.tableData3.push(tableData[i]);
+            }
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
     },
     components: {
-      'myhead': Head,
-      'carousel': Carousel,
-      'rank': Rank,
-      'myfooter': Footer,
-      'newstable': Table,
-      'mylist': List,
       'demoList': DemoList,
-      'commonList': CommonList,
-      'newDetail': NewDetail,
-      'dataItem': DataItem,
-      'dataTag': DataTag,
-      'dataClass': DataClass,
-      'dataItemHead': DataItemHead
     }
   }
 </script>

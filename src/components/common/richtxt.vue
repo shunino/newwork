@@ -66,6 +66,12 @@ export default {
       this.$emit('toClick',this.content);
       console.log('change0');
     }, // 内容改变事件
+    clearContent(){
+        this.content='';
+    },
+    init(content){
+      this.content = content;
+    }
   },
 }
 </script>

@@ -31,32 +31,39 @@
 </style>
 <template>
   <div class="commondiv" :style="'minHeight:'+myheight">
-    <div style="width: 95%;margin-top: 10px;">
+    <div style="width: 95%;margin-top: 10px;min-height: 700px;">
       <div class="po-head">科技推广</div>
-      <div class="po-list mt20">
+      <div class="po-list mt20" style="">
         <ul>
-          <li class="pointer" @click="goto()" v-for="i in 25">
+          <li class="pointer" @click="goto(i)" v-for="i in tableData">
             <div style="display: flex;align-items: center">
               <span class="pot ml10 mr10"></span>
-              <span>北斗系统对于国家的战略意义远胜民用导航的意义</span>
+              <span>{{i.title}}</span>
             </div>
             <div>
-              2017-25-85
+              {{i.createtime}}
+            </div>
+          </li>
+          <li v-if="tableData.length==0">
+            <div style="display: flex;align-items: center">
+              <span class="pot ml10 mr10"></span>
+              <span>暂时无数据！</span>
+            </div>
+            <div>
+
             </div>
           </li>
         </ul>
       </div>
-      <div class="mt20" style="text-align: left;">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage4"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
-        </el-pagination>
-      </div>
+    </div>
+    <div class="block mt10">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="pageno"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total=total>
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -83,8 +90,16 @@
     name: 'Home',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App',
-        currentPage4:1,
+        mysearch:{
+          userid: this.$userId,
+          searchKey: "",
+          countperpage: 22,
+          pageno: 1,
+          token:this.$token
+        },
+        total:1,
+        pageno: 1,
+        tableData: [],
         myheight:'auto'
       }
     },
@@ -102,10 +117,32 @@
       this.myheight = he;
       $('.head-left').find('span').removeClass('cur');
       $('#popular').addClass('cur');
+      this.getList();
     },
-    methods:{
-      goto(){
-        this.$router.push({path:'/newsDetail'});
+    methods: {
+      getList() {
+        this.$http.post('api/resshare/maintain/listTechnology',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        this.mysearch.pageno = val;
+        this.getList();
+        console.log(`当前页: ${val}`);
+      },
+      goto(row){
+        this.$router.push({path:'/popularDetail',query:{id:row.id}});
       }
     },
     components: {

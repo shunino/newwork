@@ -4,13 +4,13 @@
           <span class="ml10">{{title}}</span>
       </div>
       <div class="demo-content">
-          <div  v-for="i in 2" class="demo-list">
+          <div  v-for="i in yydata" class="demo-list">
             <el-image
               style="width: 100%; height: 200px"
-              src="../../../static/map.jpg"
+              :src="$URL+'/file/'+i.cover"
               >
             </el-image>
-            <div class="center">大数据统计</div>
+            <div class="center mt10">{{i.name}}</div>
           </div>
       </div>
     </div>
@@ -21,10 +21,16 @@
     name: 'demo',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        msg: 'Welcome to Your Vue.js App',
+        yydata:[]
       }
     },
-    props:['title']
+    props:['title','mydata'],
+    mounted () {
+      //debugger;
+      this.yydata = this.mydata;
+      console.log(this.mydata);
+    }
   }
 </script>
 
