@@ -1,82 +1,88 @@
 <template>
   <div style="width: 100%;text-align: left">
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-  <el-form-item label="用户名" prop="name">
-    <el-input v-model="ruleForm.name"></el-input>
-  </el-form-item>
-  <el-form-item label="电话" prop="name">
-    <el-input v-model="ruleForm.phone"></el-input>
-  </el-form-item>
-  <el-form-item label="邮箱" prop="name">
-    <el-input v-model="ruleForm.email"></el-input>
-  </el-form-item>
-  <el-form-item label="职业" prop="name">
-    <el-input v-model="ruleForm.work"></el-input>
-  </el-form-item>
-  <el-form-item label="所在城市" prop="region">
-    <el-select v-model="ruleForm.work" placeholder="请选择活动区域">
-      <el-option label="区域一" value="shanghai"></el-option>
-      <el-option label="区域二" value="beijing"></el-option>
-    </el-select>
-  </el-form-item>
-  <el-form-item label="详细地址" prop="name">
-    <el-input v-model="ruleForm.address"></el-input>
-  </el-form-item>
-  <el-form-item>
-    <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-    <el-button @click="resetForm('ruleForm')">重置</el-button>
-  </el-form-item>
-</el-form>
+    <el-form  :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="80px">
+      <el-form-item label="用户名称"  prop="username">
+        <el-input v-model="ruleForm2.username"></el-input>
+      </el-form-item>
+      <el-form-item label="手机号码" prop="mobile">
+        <el-input v-model="ruleForm2.mobile"></el-input>
+      </el-form-item>
+      <el-form-item label="邮件地址" prop="email">
+        <el-input v-model="ruleForm2.email"></el-input>
+      </el-form-item>
+      <el-form-item label="职业">
+        <el-input v-model="ruleForm2.profession"></el-input>
+      </el-form-item>
+      <el-form-item label="单位">
+        <el-input v-model="ruleForm2.company"></el-input>
+      </el-form-item>
+      <el-form-item label="所在城市">
+        <el-input v-model="ruleForm2.city"></el-input>
+      </el-form-item>
+      <el-form-item label="详细地址">
+        <el-input v-model="ruleForm2.address"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="register">修改</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
   export default {
     data() {
       return {
-        ruleForm: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+        ruleForm2:{},
+        rules2:{
+          username: [
+            { required: true, trigger: 'blur',validator: this.vcopy },
+          ],
+          mobile: [
+            { required: true, message: '请输入电话号码', trigger: 'blur' },
+          ],
+          email: [
+            { required: true, message: '请输入邮箱', trigger: 'blur' },
+          ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+          ],
+          password1: [
+            {required: true,validator: this.validatePass, trigger: 'blur' },
+          ],
         },
-        rules: {
-          name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-          ],
-          region: [
-            { required: true, message: '请选择活动区域', trigger: 'change' }
-          ],
-          date1: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
-          date2: [
-            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-          ],
-          type: [
-            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-          ],
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ],
-          desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
-          ]
-        }
       };
     },
+    mounted(){
+        this.getInfo();
+    },
     methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+      getInfo(){
+        this.$http.post('api/resshare/user/getUserById',{
+          userid:this.$userId,
+          token:this.$token
+        }).then(res => {
+          this.ruleForm2 = res.data.data;
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      register(){
+        var self = this;
+        this.$refs['ruleForm2'].validate((valid) => {
+          //debugger;
           if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
+            self.$http.post('api/resshare/user/updateUser',{
+              user:self.ruleForm2,
+            }).then(res => {
+              this.$message({
+                message: '修改成功！' ,
+                type: 'success'
+              });
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
           }
         });
       },

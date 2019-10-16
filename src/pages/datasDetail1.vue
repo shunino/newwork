@@ -60,17 +60,19 @@
   <div class="commondiv">
     <div class="new-detail">
       <div class="left">
-        <div class="title" style="margin-top: 0px;">神木侵蚀与环境试验站气象观测数据集（2003-2018年）</div>
-        <div class="attribute">数据贡献者：樊军(西北农林科技大学)</div>
-<!--        <div>-->
+        <div class="title" style="margin-top: 0px;">{{mydata.name}}</div>
+        <div class="attribute">数据贡献者：{{dataUser.username}}
+<!--          ({{dataUser.company}})-->
+        </div>
+        <div>
 <!--          <img src="../assets/22.png">-->
-<!--        </div>-->
-        <div class="ctxt">上传时间：2019.05.21</div>
-        <div class="ctxt">主题词（3个）：主题词：	气温，空气湿度，风速 </div>
-        <div class="ctxt"><span>数据分类体系：	应用气象学</span> <span style="margin-left: 200px;">位置区别：陕西省</span></div>
+        </div>
+        <div class="ctxt">上传时间：{{mydata.createtime}}</div>
+        <div class="ctxt">主题词（3个）：{{mydata.themes}} </div>
+        <div class="ctxt"><span>数据分类体系：	{{mydata.type1}}</span> <span style="margin-left: 200px;">位置区别：{{mydata.location}}</span></div>
         <div class="ctxt" style="display: flex;">
           <div>数据描述：</div>
-          <div style="width: 900px;margin-left: 10px;">数据集是2003-2018年神木侵蚀与环境试验站气象观测数据集，数据内容包括逐日的平均气温、最低气温、最高气温、空气湿度、风速，太阳辐射，气压等数据。可为研究该区域的相关科研人员提供基础的气象数据服务。</div>
+          <div style="width: 900px;margin-left: 10px;">{{mydata.datades}}</div>
         </div>
         <div class="ctxt" >
           <div>数据使用声明</div>
@@ -98,12 +100,12 @@
             class="mt20"
             style="width: 100%">
             <el-table-column
-              prop="name"
+              prop="filename"
               label="文件名"
              >
             </el-table-column>
             <el-table-column
-              prop="weight"
+              prop="size"
               label="文件大小"
               >
             </el-table-column>
@@ -112,7 +114,9 @@
               <template slot-scope="scope">
                 <el-button
                   type="primary"
-                  size="small">
+                  size="small"
+                  @click="down(scope.row.fileid)"
+                >
                   下载
                 </el-button>
               </template>
@@ -153,6 +157,13 @@
 <!--            layout="prev, pager, next"-->
 <!--            :total="50">-->
 <!--          </el-pagination>-->
+<!--&lt;!&ndash;          <el-pagination&ndash;&gt;-->
+<!--&lt;!&ndash;            background&ndash;&gt;-->
+<!--&lt;!&ndash;            layout="prev, pager, next"&ndash;&gt;-->
+<!--&lt;!&ndash;            :total="1000"&ndash;&gt;-->
+<!--&lt;!&ndash;            style="margin-top: 10px;margin-left: -10px;"&ndash;&gt;-->
+<!--&lt;!&ndash;          >&ndash;&gt;-->
+<!--&lt;!&ndash;          </el-pagination>&ndash;&gt;-->
 <!--        </div>-->
       </div>
       <div class="right">
@@ -176,9 +187,11 @@
     data () {
       return {
         msg: 'Welcome to Your Vue.js App',
+        mydata:{},
         tableData:[],
         tableData1:[],
-        data1:[]
+        data1:[],
+        dataUser:{}
       }
     },
     mounted(){
@@ -224,21 +237,36 @@
           date:'2019-09-01',
         },
       ];
-      let ob = {
-        name:'贵州省水土资源成果（2017-2020）.jpg',
-        weight:'500M'
-      }
-      let ob1 = {
-        name:'小若123',
-        colleage:'武汉大学',
-        explain:'其他用途 黄图高原中***',
-        date:'2017-01-05'
-      }
-      for(let i=0;i<2;i++){
-        this.tableData.push(ob);
-      }
-      for(let i=0;i<4;i++){
-        this.tableData1.push(ob1);
+      this.getDetail(this.$route.query.id);
+    },
+    methods:{
+      getUser(id){
+        this.$http.post('api/resshare/user/getUserById',{
+          userid:id,
+          token:this.$token
+        }).then(res => {
+          this.dataUser = res.data.data;
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        });
+      },
+      getDetail(id){
+        this.$http.post('api/resshare/datacenter/info',{id:id,token:this.$token}).then(res => {
+          this.mydata = res.data.data;
+          this.mydata.createtime =  this.mydata.createtime.split('T')[0];
+          this.tableData = this.mydata.filelist;
+          this.getUser(this.mydata.userid);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      down(id){
+        this.$http.post('api/resshare/datacenter/download',{id:this.$route.query.id,userid:this.$userId,token:this.$token}).then(res => {
+          this.$down(id);
+        }).catch(err => {
+          console.log(err)
+        })
       }
     },
     components: {

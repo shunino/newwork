@@ -33,23 +33,26 @@
             style="width: 100%">
             <el-table-column
               label="现有园区"
-              prop="had"
+              prop="name"
             >
             </el-table-column>
             <el-table-column
               label="园区类型"
-              prop="type"
+              prop="level"
             >
+              <template slot-scope="scope">
+                {{mytype[scope.row.level]}}
+              </template>
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+<!--                <el-button-->
+<!--                  size="mini"-->
+<!--                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
                 <el-button
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                  @click="handleDelete(scope.row.id)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -67,28 +70,63 @@
           <el-button size="small" type="primary">保存</el-button>
         </div>
         <div>
-          <el-form ref="form" :model="form" label-width="80px">
-            <el-form-item label="园区名称">
+          <el-form :rules="rules" ref="form" :model="form" label-width="80px">
+            <el-form-item label="园区名称" prop="name">
               <el-input v-model="form.name"></el-input>
             </el-form-item>
             <el-form-item label="园区等级">
-              <el-select v-model="form.region" placeholder="请选择活动区域">
-                <el-option label="国家级" value="shanghai"></el-option>
-                <el-option label="区域二" value="beijing"></el-option>
+              <el-select v-model="form.level" placeholder="请选择活动区域">
+                <el-option label="国家级" value="1"></el-option>
+                <el-option label="省级" value="2"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="园区概况">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="园区经度" prop="lon">
+              <el-input v-model="form.lon"></el-input>
             </el-form-item>
-            <el-form-item label="园区功能">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="园区纬度" prop="lat">
+              <el-input v-model="form.lat"></el-input>
             </el-form-item>
-            <el-form-item label="园区管理">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="园区地址" prop="lat">
+              <el-input v-model="form.address"></el-input>
             </el-form-item>
-            <el-form-item label="园区互动">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="图片上传" prop="cover">
+              <el-upload
+                class="avatar-uploader"
+                :action="$URL+'/upload'"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+              >
+                <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
             </el-form-item>
+            <el-form-item label="园区描述" prop="des">
+              <el-input rows="4" type="textarea" v-model="form.des"></el-input>
+            </el-form-item>
+
+            <el-tabs v-model="activeName1" @tab-click="handleClick1">
+              <el-tab-pane label="园区概况" name="first">
+                <el-form-item label="园区概况">
+                  <richtxt ref="myrich1" @toClick="getContent1" ></richtxt>
+                </el-form-item>
+              </el-tab-pane>
+              <el-tab-pane label="园区功能" name="second">
+                <el-form-item label="园区功能">
+                  <richtxt ref="myrich2" @toClick="getContent2" ></richtxt>
+                </el-form-item>
+              </el-tab-pane>
+              <el-tab-pane label="园区管理" name="third">
+                <el-form-item label="园区管理">
+                  <richtxt ref="myrich3" @toClick="getContent3" ></richtxt>
+                </el-form-item>
+              </el-tab-pane>
+              <el-tab-pane label="园区互动" name="fourth">
+                <el-form-item label="园区互动">
+                  <richtxt ref="myrich4" @toClick="getContent4" ></richtxt>
+                </el-form-item>
+              </el-tab-pane>
+            </el-tabs>
+
             <el-form-item>
               <el-button type="primary" @click="onSubmit">新增</el-button>
             </el-form-item>
@@ -100,46 +138,144 @@
 </template>
 
 <script>
+  import Richtxt from '@/components/common/richtxt'
   export default {
     data() {
       return {
+        activeName1: 'first',
+        mytype:['','国家级','省级'],
+        dialogImageUrl:'',
         activeName: 'first',
         tableData: [],
+        mysearch:{
+          userid:this.$userId,
+          countperpage: 12,
+          pageno: 1,
+        },
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+          level: '',
+          lon: '',
+          lat: '',
+          address: '',
+          p_survey: '',
+          p_function: [],
+          p_manager: '',
+          p_interact: '',
+          cover: '',
+          des: [],
+          userid:this.$userId,
+          token:this.$token,
+          id:null,
+        },
+        rules:{
+          name: [
+            { required: true, message: '请输入数据名', trigger: 'blur' },
+          ],
+          datades: [
+            { required: true, message: '请填写数据描述', trigger: 'blur' },
+          ],
+          cover: [
+            { required: true, message: '请上传图片', trigger: 'blur' },
+          ],
+        },
       };
     },
     created(){
-      let a = {
-        had: '深圳市水土保持科技示范园',
-        type: '国家级',
-      }
-      this.tableData.push(a);
-      for(let i=0;i<4;i++){
-        this.tableData.push(a);
-      }
+      // let a = {
+      //   had: '深圳市水土保持科技示范园',
+      //   type: '国家级',
+      // }
+      // this.tableData.push(a);
+      // for(let i=0;i<4;i++){
+      //   this.tableData.push(a);
+      // }
+      this.getList();
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
+      handleClick1(){
+
+      },
+      getContent1(html) {
+        this.form.p_survey = html;
+      },
+      getContent2(html) {
+        this.form.p_function = html;
+      },
+      getContent3(html) {
+        this.form.p_manager = html;
+      },
+      getContent4(html) {
+        this.form.p_interact = html;
+      },
+      handleAvatarSuccess(res, file) {
+        //debugger;
+        this.form.cover = res.data.fileid;
+        this.dialogImageUrl = URL.createObjectURL(file.raw);
       },
       onSubmit() {
-        console.log('submit!');
+        let self = this;
+        // this.form.type1 = this.form.type1/1;
+        // this.form.type2 = this.form.type2/1;
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            self.$http.post('api/resshare/maintain/addOrUpdatePark',{ "park":self.form,token:this.$token}).then(res => {
+              self.$alert('操作成功!', '操作', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  //this.activeName='first';
+                  this.getList();
+                }
+              });
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
       },
-      handleEdit(){
-
+      getList() {
+        this.$http.post('api/resshare/maintain/listPark',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
       },
-      handleDelete(){
-
-      }
+      handleDelete(id){
+        let mysearch = {
+          id:id,
+          token:this.$token
+        }
+        this.$http.post('api/resshare/maintain/deletePark',mysearch).then(res => {
+          this.$alert('确定删除？', '确定', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.getList();
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
+            }
+          });
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      handleClick(tab, event) {
+        this.form.id = null;
+        this.getList();
+        console.log(tab, event);
+      },
+    },
+    components: {
+      'richtxt':Richtxt
     }
   };
 </script>

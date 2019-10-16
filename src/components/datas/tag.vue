@@ -42,7 +42,7 @@
       </div>
       <div class="tag-center">
         <span class="tag-button" style="border:2px solid #CAE088;color: #CAE088;">全部</span>
-        <span v-for="i in 10" class="tag-button">气象（454）</span>
+        <span v-for="i in data1" class="tag-button">{{i}}</span>
       </div>
       <div class="tag-right">
         <span class="el-icon-caret-bottom">更多</span>
@@ -51,11 +51,11 @@
 
     <div class="data-tag" style="border-top:1px solid #E4E7ED;border-bottom:1px solid #E4E7ED;">
       <div class="tag-left">
-        主题间：
+        空间位置：
       </div>
       <div class="tag-center">
         <span class="tag-button" style="border:2px solid #CAE088;color: #CAE088;">全部</span>
-        <span v-for="i in 10" class="tag-button">中国（23）</span>
+        <span v-for="i in data2" class="tag-button">{{i}}</span>
       </div>
       <div class="tag-right">
         <span class="el-icon-caret-bottom">更多</span>
@@ -70,8 +70,14 @@
     name: 'list',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        msg: 'Welcome to Your Vue.js App',
+        data1:[],
+        data2:[]
       }
+    },
+    mounted () {
+      this.data1 = ['地图','数据','线图'];
+      this.data2 = ['安顺','贵阳','遵义'];
     }
   }
 </script>

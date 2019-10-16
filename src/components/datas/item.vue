@@ -1,20 +1,20 @@
 <template>
-  <div class="data-item" @click="goto()">
+  <div class="data-item">
       <div class="img-box">
-        <img style="width:90%;height:90%;" src="../../../static/1.jpg">
+        <img style="width:90%;height:90%;" :src="$URL+'/file/'+mydata.cover">
       </div>
     <div class="title mt10 ml10">
-        黄图高原分辨率1000m平均气氛
+      {{mydata.name}}
     </div>
     <div class="num mt10 ml10">
-      数据量 9.363MB
+      数据量 {{mydata.filesize}}
     </div>
     <div class="school mt10 ml10">
-      北京大学
+      {{mydata.location}}
     </div>
     <div class="handle mt10 ml10">
-      <span class="handle-button">查看数据</span>
-         <span class="handle-button">收藏数据</span>
+      <span class="handle-button" @click="goto(mydata.id)">查看数据</span>
+         <span class="handle-button" @click="restore(mydata.id)">收藏数据</span>
     </div>
   </div>
 </template>
@@ -24,12 +24,30 @@
     name: 'list',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        msg: 'Welcome to Your Vue.js App',
       }
     },
+    props:['mydata'],
+    mounted(){
+
+    },
     methods:{
-      goto(){
-        this.$router.push({path:'/DatasDetail'});
+      goto(id){
+        this.$router.push({path:'/DatasDetail1',query:{id:id}});
+      },
+      restore(id){
+        this.$http.post('api/resshare/datacenter/collect',{id:id,userid:this.$userId,token:this.$token}).then(res => {
+          this.$message({
+            message: '收藏成功！' ,
+            type: 'success'
+          });
+        }).catch(err => {
+          this.$message({
+            message: '已经收藏过该数据！',
+            type: 'error'
+          });
+          console.log(err)
+        })
       }
     }
   }

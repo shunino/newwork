@@ -50,11 +50,11 @@
     data() {
       return {
         mysearch:{
-          userid: this.$userId,
+          //userid: this.$userId,
           searchKey: "",
           countperpage: 12,
           pageno: 1,
-          token:this.$token
+         // token:this.$token
         },
         total:1,
         pageno: 1,

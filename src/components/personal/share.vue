@@ -49,26 +49,33 @@
         </div>
       </div>
       <div class="share-list mt20">
-          <div class="list-div">
+          <div class="list-div" v-for="i in tableData">
               <div class="list-img">
-                <img style="width:100%;height: 100%;" src="../../../static/1.jpg">
+                <img style="width:100%;height: 100%;" :src="$URL+'/file/'+i.cover">
               </div>
             <div class="list-con">
               <div class="con-top">
-                <span>测试数据<span>[2019.06.02]</span></span>
-                <span>1各文件，共45.0kb</span>
+                <span>{{i.name}}<span>[{{i.createtime}}]</span></span>
+                <span>{{i.filelist.length}}各文件，共{{i.filesize}}</span>
               </div>
               <div class="con-center">
-                dfdsfdsfdsfdsfdsfs
+                {{i.remark}}
               </div>
               <div>
-                <span>由 <b>蒙杨</b> 分享，下载需要 <b style="color: red;">1</b> 积分，已经下载 <b>0</b> 次</span>
+                <b>{{status[i.status]}}</b>
                 <span>
-                    <el-button size="mini" round>删除共享</el-button>
-                  <el-button size="mini" round>查看</el-button>
+                  下载需要 <b style="color: red;">1</b>
+                  积分，已经下载 <b>{{i.downnum}}</b> 次
+                </span>
+                <span>
+                    <el-button size="mini" round @click="handleDelete(i.id)">删除共享</el-button>
+                  <el-button size="mini" round @click="goto(i.id)">查看</el-button>
                 </span>
               </div>
             </div>
+          </div>
+          <div v-if="tableData.length==0">
+            当前并无共享！
           </div>
       </div>
       <div class="mt20" style="text-align: right;">
@@ -87,7 +94,74 @@
 
 <script>
   export default {
+    props:['upload'],
+    data(){
+      return{
+        status:['','审核中','审核通过','审核不通过'],
+        mysearch:{
+          searchWrap:{
+            userid:this.$userId,
+          },
+          countperpage: 12,
+          pageno: 1,
+        },
+        tableData:[],
+        currentPage1: 5,
+        currentPage2: 5,
+        currentPage3: 5,
+        currentPage4: 4
+      }
+    },
+    mounted(){
+      this.getList();
+    },
     methods: {
+      check(id){
+        let mysearch = {
+          id:id,
+          token:this.$token,
+          status:2
+        }
+        this.$http.post('api/resshare/datacenter/check',mysearch).then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      getList() {
+        this.$http.post('api/resshare/datacenter/list',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          let user = this.$getCookie('username');
+          for(let i in this.tableData ){
+            if(user=='admin'&&this.tableData[i].status==1){
+              this.check(this.tableData[i].id);
+            }
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      handleDelete(id){
+        let mysearch = {
+          id:3,
+          token:this.$token
+        }
+        this.$alert('确定删除？', '确定', {
+          confirmButtonText: '确定',
+          callback: action => {
+            action=='confirm' && this.$http.post('api/resshare/datacenter/delete',mysearch).then(res => {
+              this.getList();
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
@@ -97,16 +171,11 @@
       toupload(type){
         this.$emit('upload','shareForm');
       },
+      goto(id){
+        this.$router.push({path:'/DatasDetail1',query:{id:id}});
+      }
     },
-    props:['upload'],
-    data() {
-      return {
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4
-      };
-    }
+
   }
 </script>
 

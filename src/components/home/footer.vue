@@ -2,10 +2,10 @@
     <div class="myfooter">
         <div class="footer-left">
           <a
-            href="http://www.gzsb.org.cn/class_229/default.aspx"
+            href="http://www.swcc.org.cn/"
             target="_blank"
           >
-            贵州水土保持生态网
+            中国水土保持生态网
           </a>
           <a
             href="https://www.bidcenter.com.cn/newssearchyz-63334594.html"
@@ -52,7 +52,7 @@
     width: 100%;
     height: 90px;
     color:white;
-    margin-top: 40px;
+    /*margin-top: 40px;*/
   }
   .footer-left{
     display: flex;

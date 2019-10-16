@@ -13,6 +13,7 @@ import Intro from '@/pages/intro'
 import NewsDetail from '@/pages/newsDetail'
 import PopularDetail from '@/pages/popularDetail'
 import DatasDetail from '@/pages/datasDetail'
+import DatasDetail1 from '@/pages/datasDetail1'
 import GardenDetail from '@/pages/gardenDetail'
 
 Vue.use(Router)
@@ -73,6 +74,11 @@ const router = new Router({
       path: '/DatasDetail',
       name: 'DatasDetail',
       component: DatasDetail
+    },
+    {
+      path: '/DatasDetail1',
+      name: 'DatasDetail1',
+      component: DatasDetail1
     },
     {
       path: '/gardenDetail',

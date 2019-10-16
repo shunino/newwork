@@ -38,9 +38,9 @@
 </style>
 <template>
   <div class="per-share">
-    <div class="share-head">
+    <div class="share-head" >
       <div>
-        <el-button size="small">小型按钮</el-button>
+<!--        <el-button @click="toupload('shareForm')" size="small">上传共享</el-button>-->
       </div>
       <div>
         <el-input placeholder="请输入内容" class="input-with-select">
@@ -49,26 +49,32 @@
       </div>
     </div>
     <div class="share-list mt20">
-      <div class="list-div">
+      <div class="list-div" v-for="i in tableData">
         <div class="list-img">
-          <img style="width:100%;height: 100%;" src="../../../static/1.jpg">
+          <img style="width:100%;height: 100%;" :src="$URL+'/file/'+i.cover">
         </div>
         <div class="list-con">
           <div class="con-top">
-            <span>测试数据<span>[2019.06.02]</span></span>
-            <span>1各文件，共45.0kb</span>
+            <span>{{i.name}}<span>[{{i.createtime}}]</span></span>
+            <span>{{i.filelist.length}}各文件，共{{i.filesize}}</span>
           </div>
           <div class="con-center">
-           repositrepositrepositrepositrepositreposit
+            {{i.remark}}
           </div>
           <div>
-            <span>由 <b>张飞</b> 分享，下载需要 <b style="color: red;">2</b> 积分，已经下载 <b>1</b> 次</span>
+                <span>
+<!--                  由 <b>蒙杨</b> 分享，下载需要 <b style="color: red;">1</b> -->
+<!--                  积分，已经下载 <b>{{i.downnum}}</b> 次-->
+                </span>
             <span>
-                    <el-button size="mini" round>取消收藏</el-button>
-                  <el-button size="mini" round>查看</el-button>
+                    <el-button size="mini" round @click="handleDelete(i.id)">取消收藏</el-button>
+                  <el-button size="mini" round @click="goto(i.id)">查看</el-button>
                 </span>
           </div>
         </div>
+      </div>
+      <div v-if="tableData.length==0">
+        当前并无收藏！
       </div>
     </div>
     <div class="mt20" style="text-align: right;">
@@ -87,22 +93,71 @@
 
 <script>
   export default {
+    props:['upload'],
+    data(){
+      return{
+        mysearch:{
+          userid:this.$userId,
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
+        tableData:[],
+        currentPage1: 5,
+        currentPage2: 5,
+        currentPage3: 5,
+        currentPage4: 4
+      }
+    },
+    mounted(){
+      this.getList();
+    },
     methods: {
+      getList() {
+        this.$http.post('api/resshare/datacenter/mycollect',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      handleDelete(id){
+        let mysearch = {
+          id:id/1,
+          token:this.$token,
+          userid:this.$userId,
+        }
+        this.$alert('确定取消收藏？', '确定', {
+          confirmButtonText: '确定',
+          callback: action => {
+            action=='confirm' && this.$http.post('api/resshare/datacenter/cancel',mysearch).then(res => {
+              this.getList();
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+      },
+      toupload(type){
+        this.$emit('upload','shareForm');
+      },
+      goto(id){
+        this.$router.push({path:'/DatasDetail1',query:{id:id}});
       }
     },
-    data() {
-      return {
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4
-      };
-    }
+
   }
 </script>
 

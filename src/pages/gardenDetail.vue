@@ -37,17 +37,17 @@
           </ul>
         </div>
       <div class="in-content">
-            <div v-show="mytype=='garden1'">
-             概况
+            <div id="pSurvey" v-show="mytype=='garden1'">
+
             </div>
-            <div v-show="mytype=='garden2'">
-             功能
+            <div id="pFunction" v-show="mytype=='garden2'">
+
             </div>
-            <div v-show="mytype=='garden3'">
-             管理
+            <div id="pManager" v-show="mytype=='garden3'">
+
             </div>
-            <div v-show="mytype=='garden4'">
-              互动
+            <div id="pInteract" v-show="mytype=='garden4'">
+
             </div>
       </div>
     </div>
@@ -78,7 +78,8 @@
       return {
         msg: 'Welcome to Your Vue.js App',
         myheight:'auto',
-        mytype:'garden1'
+        mytype:'garden1',
+        mydata:{}
       }
     },
     mounted(){
@@ -87,8 +88,22 @@
       this.myheight = he;
      // $('.head-left').find('span').removeClass('cur');
       //$('#intro').addClass('cur');
+      this.getDetail(this.$route.query.id);
     },
     methods:{
+      getDetail(id){
+        this.$http.post('api/resshare/maintain/getPark',{id:id,token:this.$token}).then(res => {
+          this.mydata = res.data.data;
+          this.mydata.createtime =  this.mydata.createtime.split('T')[0];
+          $('#pSurvey').html(this.mydata.pSurvey);
+          $('#pInteract').html(this.mydata.pInteract);
+          $('#pManager').html(this.mydata.pManager);
+          $('#pFunction').html(this.mydata.pFunction);
+
+        }).catch(err => {
+          console.log(err)
+        })
+      },
       changeTab(type){
         this.mytype = type;
       }

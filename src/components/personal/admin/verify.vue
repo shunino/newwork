@@ -15,56 +15,68 @@
 </style>
 <template>
   <div>
-    <div id="csmy">
-
-    </div>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="新闻上传" name="first" class="myfirst">
-        <div>
-          <el-form :rules="rules" ref="form" :model="form" label-width="80px">
-            <el-form-item label="新闻名称" prop="title">
-              <el-input v-model="form.title"></el-input>
-            </el-form-item>
-            <el-form-item label="作者" prop="author">
-              <el-input v-model="form.author"></el-input>
-            </el-form-item>
-            <el-form-item label="来源">
-              <el-input v-model="form.sources"></el-input>
-            </el-form-item>
-            <el-form-item  label="新闻详情">
-                <richtxt ref="myrich" @toClick="getContent" ></richtxt>
-            </el-form-item>
-<!--            <el-form-item label="图片" style="margin-top: 60px;">-->
-<!--              <el-upload-->
-<!--                action="http://222.85.224.95:9090/upload"-->
-<!--                list-type="picture-card"-->
-<!--                :on-preview="handlePictureCardPreview"-->
-<!--                :on-remove="handleRemove">-->
-<!--                <i class="el-icon-plus"></i>-->
-<!--              </el-upload>-->
-<!--              <el-dialog :visible.sync="dialogVisible" size="tiny">-->
-<!--                <img width="100%" :src="dialogImageUrl" alt="">-->
-<!--              </el-dialog>-->
-<!--            </el-form-item>-->
-
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit">新增</el-button>
-            </el-form-item>
-          </el-form>
+    <el-dialog
+      title="查看"
+      :visible.sync="dialogVisible"
+      width="70%"
+      >
+      <div style="text-align: left;">
+        <div>数据名称：{{form.name}}</div>
+        <div class="mt10">数据贡献者：{{dataUser.username}}</div>
+        <div class="mt10">上传时间：{{form.createtime}}</div>
+        <div class="mt10">主题词：{{form.themes}}</div>
+        <div class="mt10">数据分类体系：{{form.type1}}</div>
+        <div class="mt10">位置区别：{{form.location}}</div>
+        <div class="mt10">数据描述：</div>
+        <div style="text-indent: 20px;">
+          {{form.datades}}
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="新闻列表" name="second" class="myfirst">
+        <div class="ctxt fujian mt10">
+          <div class="news-head">数据附件</div>
+          <el-table
+            :data="tableData1"
+            stripe
+            border
+            class="mt20"
+            style="width: 100%">
+            <el-table-column
+              prop="filename"
+              label="文件名"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="size"
+              label="文件大小"
+            >
+            </el-table-column>
+            <el-table-column
+              label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="down(scope.row.fileid)"
+                >
+                  下载
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer" v-if="form.status==1">
+        <el-button type="primary" size="small" @click="check(2)">审核通过</el-button>
+        <el-button type="warning" size="small" @click="check(3)">审核不通过</el-button>
+      </div>
+    </el-dialog>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="数据列表" name="first" class="myfirst">
           <el-table
             :data="tableData"
             style="width: 100%;min-height: 700px;">
             <el-table-column
-              label="新闻名称"
-              prop="title"
-            >
-            </el-table-column>
-            <el-table-column
-              label="作者"
-              prop="author"
+              label="数据名称"
+              prop="name"
             >
             </el-table-column>
             <el-table-column
@@ -73,22 +85,23 @@
             >
             </el-table-column>
             <el-table-column
-              label="来源"
-              prop="sources"
+              label="状态"
+            >
+              <template slot-scope="scope">
+                {{status[scope.row.status]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="位置区划"
+              prop="location"
             >
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
-                  type="danger"
-                  @click="handleDelete(scope.row.id)">删除</el-button>
-
-                <el-button
-                  size="mini"
                   type="primary"
-                  style="display: none"
-                  @click="handleEdit(scope.row)">修改</el-button>
+                  @click="look(scope.row)">查看</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -111,24 +124,22 @@
   export default {
     data() {
       return {
+        dataUser:{},
+        status:['','审核中','审核通过','审核不通过'],
         mysearch:{
-          searchKey: "",
+          searchWrap:{
+          },
           countperpage: 12,
           pageno: 1,
+
         },
         total:1,
         pageno: 1,
+        dialogVisible:false,
         tableData: [],
+        tableData1: [],
         activeName: 'first',
         form: {
-          title: '',
-          contents: '',
-          contenttype: '2',
-          author: '',
-          sources: '',
-          userid:this.$userId,
-          token:this.$token,
-          id:null
         },
         rules:{
           title: [
@@ -141,37 +152,48 @@
       };
     },
     created(){
+      this.getList();
     },
     methods: {
-      getContent(html) {
-       this.form.contents = html;
-      },
-      onSubmit() {
-        let self = this;
-        this.$refs['form'].validate((valid) => {
-          if (valid) {
-            self.$http.post('api/resshare/maintain/addOrUpdateNews',{ "news":self.form,token:this.$token}).then(res => {
-              self.$alert('操作成功!', '操作', {
-                confirmButtonText: '确定',
-                callback: action => {
-                  this.activeName='second';
-                  this.getList();
-                }
-              });
-              this.form.contents = '';
-              this.form.title = '';
-              this.form.author = '';
-              this.form.sources = '';
-              this.$refs.myrich.clearContent();
-              console.log(res);
-            }).catch(err => {
-              console.log(err)
-            })
-          }
+      getUser(id){
+        this.$http.post('api/resshare/user/getUserById',{
+          userid:id,
+          token:this.$token
+        }).then(res => {
+          this.dataUser = res.data.data;
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
         });
       },
+      down(id){
+        this.$down(id);
+      },
+      check(status){
+        let mysearch = {
+          id:this.form.id,
+          token:this.$token,
+          status:status
+        }
+        this.$http.post('api/resshare/datacenter/check',mysearch).then(res => {
+          this.$message({
+            type: 'success',
+            message: '操作成功！'
+          });
+          this.dialogVisible = false;
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
+      look(row) {
+        this.form = row;
+        this.getUser(row.userid);
+        this.tableData1 = row.filelist;
+        this.dialogVisible = true;
+      },
       getList() {
-        this.$http.post('api/resshare/maintain/listNews',this.mysearch).then(res => {
+        this.$http.post('api/resshare/datacenter/list',this.mysearch).then(res => {
           this.tableData = res.data.data.data;
           this.pageno = res.data.data.pageno;
           this.total = res.data.data.total;

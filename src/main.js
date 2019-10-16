@@ -14,6 +14,52 @@ import axios from 'axios'
 //通用常量
 Vue.prototype.$URL='http://222.85.224.95:9090'
 
+Vue.prototype.$STATE = [
+  {
+    head:'水土流失类',
+    mydata:[
+      '水土流失两区',
+      '水土流失消长',
+      '水土流失预测']
+  },
+  {
+    head:'土地资源类',
+    mydata:['土壤侵蚀',
+      '国家文化自然遗产',
+      '地质公园',
+      '湿地公园',
+      '森林公园',
+      '风景名胜区',
+      '自然保护区',
+      '国土土地利用',
+      '岩性分布',
+      '土壤分布']
+  },
+  {
+    head:'水资源类',
+    mydata:['水源保护区',
+      '八大水系',
+      '水库',
+      '雨量站',
+      '水文站']
+  },
+  {
+    head:'生态治理类',
+    mydata:['水土保持综合治理',
+      '河道管理范围',
+      '生态红线']
+  },
+  {
+    head:'社会经济类',
+    mydata:['生产建设项目备案公示资料',
+      '目标考核',
+      '补偿费征收信息',
+      '城镇规划',
+      '农业产业发展规划',
+      '行政区划信息（国家基础地理）']
+  },
+]
+
 Vue.prototype.$http=axios
 //设置cookie
 Vue.prototype.$setCookie = function (cname, cvalue, exdays) {
@@ -44,10 +90,14 @@ Vue.prototype.$commonGo = function(src){
   this.$router.push({path:src});
 }
 
+Vue.prototype.$down = function(id){
+  window.open(this.$URL+'/download/'+id);
+}
+
 Vue.prototype.$userId = null;
 Vue.prototype.$token = null;
 
-Vue.use(axios);
+//Vue.use(axios);
 
 import $ from 'jquery'
 

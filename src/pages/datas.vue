@@ -40,7 +40,7 @@
           <div class="center-bottom mt10">
             <dataItemHead></dataItemHead>
             <div style="display: flex;flex-wrap: wrap;margin-left:-20px;">
-              <dataItem v-for="i in 6"></dataItem>
+              <dataItem :mydata="i"  v-for="i in tableData"></dataItem>
             </div>
           </div>
         </div>
@@ -72,6 +72,15 @@
       return {
         msg: 'Welcome to Your Vue.js App',
         data1:[],
+        tableData:[],
+        mysearch:{
+          searchWrap:{
+            //userid:this.$userId,
+            status:2
+          },
+          countperpage: 12,
+          pageno: 1,
+        },
       }
     },
     mounted(){
@@ -119,6 +128,23 @@
       ];
       $('.head-left').find('span').removeClass('cur');
       $('#datas').addClass('cur');
+
+      this.getList();
+    },
+    methods:{
+      getList() {
+        this.$http.post('api/resshare/datacenter/list',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          // this.pageno = res.data.data.pageno;
+          // this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
     },
     components: {
       'myhead': Head,

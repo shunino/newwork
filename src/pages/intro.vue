@@ -26,8 +26,8 @@
   }
 </style>
 <template>
-  <div class="commondiv" :style="'minHeight:'+myheight">
-    <div style="width: 95%;margin-top: 30px;display: flex">
+  <div class="commondiv" style="min-height: 700px;">
+    <div style="width: 95%;margin-top: 30px;display: flex;min-height: 700px;">
         <div class="in-left">
           <ul>
             <li @click="changeTab('intro')" :class="mytype=='intro' ? 'cur' : ''">本站介绍</li>

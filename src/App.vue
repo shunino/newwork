@@ -1,9 +1,17 @@
 <template>
-  <div id="app">
+  <div id="app" >
 <!--    <img src="./assets/logo.png">-->
-    <top></top>
-    <myhead></myhead>
-    <router-view/>
+<!--    <img style="position: absolute;-->
+<!--    height: 100%;-->
+<!--    width: 100%;-->
+<!--    z-index: -1;" src="../static/1.jpg" />-->
+      <top></top>
+      <myhead></myhead>
+    <div style="width: 100%;display: flex;justify-content: center;background: gainsboro;padding-bottom: 20px;">
+      <div style="width: 1245px;background: white;display: flex;justify-content: center;flex-direction: column;padding-bottom: 20px;">
+        <router-view/>
+      </div>
+    </div>
     <myfooter></myfooter>
   </div>
 </template>
@@ -38,8 +46,30 @@ export default {
   }
 }
 </script>
-
 <style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
   .commondiv {
     display: flex;text-align: center;flex-direction: column;align-items: center;
   }

@@ -6,19 +6,19 @@
   <el-table
     :data="tableData"
     stripe
-    style="width: 100%">
+    style="width: 100%;min-height: 600px;">
     <el-table-column
-      prop="name"
+      prop="dataname"
       label="数据名称"
       >
     </el-table-column>
     <el-table-column
-      prop="weight"
+      prop="filesize"
       label="数据大小"
       >
     </el-table-column>
     <el-table-column
-      prop="time"
+      prop="createtime"
       label="下载时间">
     </el-table-column>
   </el-table>
@@ -40,23 +40,34 @@
   export default {
     data() {
       return {
+        mysearch:{
+          userid:this.$userId,
+          countperpage: 12,
+          pageno: 1,
+          token:this.$token
+        },
         tableData: [],
         currentPage4:1
 
       }
     },
     created(){
-      let a = {
-        name: '数据1',
-        weight: '50M',
-        time: '2017.8.21',
-      }
-      this.tableData.push(a);
-      for(let i=0;i<4;i++){
-        this.tableData.push(a);
-      }
+      this.getList();
     },
     methods: {
+      getList() {
+        this.$http.post('api/resshare/datacenter/mydownload',this.mysearch).then(res => {
+          this.tableData = res.data.data.data;
+          this.pageno = res.data.data.pageno;
+          this.total = res.data.data.total;
+          for(let i in this.tableData ){
+            this.tableData[i].createtime = this.tableData[i].createtime.split('T')[0];
+          }
+          console.log(res);
+        }).catch(err => {
+          console.log(err)
+        })
+      },
       handleSizeChange(){}, // 失去焦点事件
       handleCurrentChange(){}, // 获得焦点事件
     },
