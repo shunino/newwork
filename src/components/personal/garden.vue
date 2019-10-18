@@ -46,9 +46,9 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-<!--                <el-button-->
-<!--                  size="mini"-->
-<!--                  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
+                <el-button
+                  size="mini"
+                  @click="handleEdit(scope.row)">编辑</el-button>
                 <el-button
                   size="mini"
                   type="danger"
@@ -58,7 +58,7 @@
           </el-table>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="新增园区" name="second" class="myfirst">
+      <el-tab-pane :label="secondTxt" name="second" class="myfirst">
         <div>
           <ul>
             <li>请勿上传非法数据，否者后果自负;</li>
@@ -104,7 +104,7 @@
               <el-input rows="4" type="textarea" v-model="form.des"></el-input>
             </el-form-item>
 
-            <el-tabs v-model="activeName1" @tab-click="handleClick1">
+            <el-tabs v-model="activeName1" >
               <el-tab-pane label="园区概况" name="first">
                 <el-form-item label="园区概况">
                   <richtxt ref="myrich1" @toClick="getContent1" ></richtxt>
@@ -142,6 +142,7 @@
   export default {
     data() {
       return {
+        secondTxt:'新增',
         activeName1: 'first',
         mytype:['','国家级','省级'],
         dialogImageUrl:'',
@@ -153,17 +154,6 @@
           pageno: 1,
         },
         form: {
-          name: '',
-          level: '',
-          lon: '',
-          lat: '',
-          address: '',
-          p_survey: '',
-          p_function: [],
-          p_manager: '',
-          p_interact: '',
-          cover: '',
-          des: [],
           userid:this.$userId,
           token:this.$token,
           id:null,
@@ -182,19 +172,45 @@
       };
     },
     created(){
-      // let a = {
-      //   had: '深圳市水土保持科技示范园',
-      //   type: '国家级',
-      // }
-      // this.tableData.push(a);
-      // for(let i=0;i<4;i++){
-      //   this.tableData.push(a);
-      // }
       this.getList();
     },
     methods: {
-      handleClick1(){
-
+      handleClick(tab, event) {
+        this.clear();
+        this.getList();
+        this.secondTxt = '新增';
+        console.log(tab, event);
+      },
+      clear(){
+        this.form = {};
+        this.form.userid = this.$userId;
+        this.form.token = this.$token;
+        this.form.id = null;
+      },
+      handleEdit(row){
+        this.form = {};
+        this.form = {
+          name: row.name,
+          level: row.level,
+          lon: row.lon,
+          lat: row.lat,
+          address: row.address,
+          p_survey: row.pSurvey,
+          p_function: row.pFunction,
+          p_manager: row.pManager,
+          p_interact: row.pInteract,
+          cover: row.cover,
+          des:row.des,
+          userid:this.$userId,
+          token:this.$token,
+          id:null,
+        };
+        //this.dialogImageUrl
+        //
+        // this.$refs1.myrich.init(row.pSurvey);
+        //其他
+        this.secondTxt = '编辑';
+        this.activeName = 'second';
       },
       getContent1(html) {
         this.form.p_survey = html;
@@ -223,7 +239,8 @@
               self.$alert('操作成功!', '操作', {
                 confirmButtonText: '确定',
                 callback: action => {
-                  //this.activeName='first';
+                  this.activeName='first';
+                  this.clear();
                   this.getList();
                 }
               });
@@ -252,26 +269,21 @@
           id:id,
           token:this.$token
         }
-        this.$http.post('api/resshare/maintain/deletePark',mysearch).then(res => {
-          this.$alert('确定删除？', '确定', {
-            confirmButtonText: '确定',
-            callback: action => {
+        this.$alert('确定删除？', '确定', {
+          confirmButtonText: '确定',
+          callback: action => {
+            action=='confirm' && this.$http.post('api/resshare/maintain/deletePark',mysearch).then(res => {
               this.getList();
               this.$message({
                 type: 'success',
                 message: '删除成功！'
               });
-            }
-          });
-          console.log(res);
-        }).catch(err => {
-          console.log(err)
-        })
-      },
-      handleClick(tab, event) {
-        this.form.id = null;
-        this.getList();
-        console.log(tab, event);
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
       },
     },
     components: {

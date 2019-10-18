@@ -1,22 +1,29 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
   .in-left{
-    width: 14%;
-    height: 500px;
-    border-right: 1px solid gray;
-    padding: 5px;
+    width: 170px;
+    height:700px;
     margin-right: 1%;
   }
+  .in-left ul{
+    background: #F2F2F2;
+    height: 100%;
+    overflow: hidden;
+  }
   .in-left ul li{
-    border-bottom: 2px solid gray;
+    color: #868686;
     text-align: center;
     height: 30px;
     line-height: 30px;
-    font-weight: bold;
     cursor: pointer;
+    margin-top: 15px;
   }
   .in-left ul li.cur{
-    border-bottom-color:green;
+    color: #416EFF;
+  }
+  .in-left ul li.cur .gico{
+    display: inline-block;
   }
   .in-content{
     width: 85%;
@@ -24,16 +31,25 @@
     text-indent: 20px;
     line-height: 25px;
   }
+  .gico{
+    width: 18px;
+    height: 5px;
+    border-radius: 10px;
+    background: #416EFF;
+    display: inline-block;
+    display: none;
+  }
 </style>
+<!--  #F2F2F2 #416EFF-->
 <template>
   <div class="commondiv" :style="'minHeight:'+myheight">
     <div style="width: 95%;margin-top: 30px;display: flex">
         <div class="in-left">
           <ul>
-            <li @click="changeTab('garden1')" :class="mytype=='garden1' ? 'cur' : ''">园区概况</li>
-            <li @click="changeTab('garden2')" :class="mytype=='garden2' ? 'cur' : ''">园区功能</li>
-            <li @click="changeTab('garden3')" :class="mytype=='garden3' ? 'cur' : ''">园区管理</li>
-            <li @click="changeTab('garden4')" :class="mytype=='garden4' ? 'cur' : ''">园区互动</li>
+            <li @click="changeTab('garden1')" :class="mytype=='garden1' ? 'cur' : ''"><span style="margin-right: 15px;" class="gico"></span><span>园区概况</span><span style="margin-left: 15px;" class="gico"></span></li>
+            <li @click="changeTab('garden2')" :class="mytype=='garden2' ? 'cur' : ''"><span style="margin-right: 15px;" class="gico"></span><span>园区功能</span><span style="margin-left: 15px;" class="gico"></span></li>
+            <li @click="changeTab('garden3')" :class="mytype=='garden3' ? 'cur' : ''"><span style="margin-right: 15px;" class="gico"></span><span>园区管理</span><span style="margin-left: 15px;" class="gico"></span></li>
+            <li @click="changeTab('garden4')" :class="mytype=='garden4' ? 'cur' : ''"><span style="margin-right: 15px;" class="gico"></span><span>园区互动</span><span style="margin-left: 15px;" class="gico"></span></li>
           </ul>
         </div>
       <div class="in-content">

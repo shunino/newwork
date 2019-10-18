@@ -9,10 +9,11 @@
   }
   .left-bottom .bottom-head{
       text-align: left;
-    border-bottom: 3px solid #BDDFE8;
-    height: 30px;
+    border-bottom: 3px solid #426EFF;
+    height: 35px;
     line-height: 30px;
     font-weight: bold;
+    font-size: 20px;
   }
   .list-li>span{
     font-size: 13px !important;

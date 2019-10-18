@@ -72,7 +72,7 @@
     margin-left: 10px;
   }
   .data-item .title{
-    color: red;
+    color: #00A8FF;
   }
   .data-item .num{
 

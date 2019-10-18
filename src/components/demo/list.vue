@@ -46,8 +46,8 @@
     align-items: center;
     justify-content: space-between;
     font-weight: bold;
-    border-left: 3px solid #006633;
-    border-bottom: 2px solid #006633;
+    background: #E6EEFB;
+    border-left: 3px solid #416EFF;
   }
   .demo-content{
     display: flex;

@@ -15,7 +15,18 @@
     display: flex;
     flex-direction: column;
   }
-
+.mydes{
+  /* height: 77px; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  text-overflow: ellipsis;
+  /* width: 200px; */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  text-indent: 20px;
+}
 </style>
 <template>
   <div class="ga-img pointer" @click="goto(mydata.id)">
@@ -25,7 +36,7 @@
     <div class="img-text">
       <div style="height: 90%;">
         <div>{{mydata.name}}</div>
-        <div class="mt10">
+        <div class="mt10 mydes">
          {{mydata.des}}
         </div>
       </div>

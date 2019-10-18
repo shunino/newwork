@@ -155,6 +155,10 @@
           callback: action => {
             action=='confirm' && this.$http.post('api/resshare/datacenter/delete',mysearch).then(res => {
               this.getList();
+              this.$message({
+                type: 'success',
+                message: '删除成功！'
+              });
               console.log(res);
             }).catch(err => {
               console.log(err)

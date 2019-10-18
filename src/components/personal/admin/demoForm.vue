@@ -198,21 +198,21 @@
           id:id,
           token:this.$token
         }
-        this.$http.post('api/resshare/maintain/deleteSpecial',mysearch).then(res => {
-          this.$alert('确定删除？', '确定', {
-            confirmButtonText: '确定',
-            callback: action => {
+        this.$alert('确定删除？', '确定', {
+          confirmButtonText: '确定',
+          callback: action => {
+            action=='confirm' && this.$http.post('api/resshare/maintain/deleteSpecial',mysearch).then(res => {
               this.getList();
               this.$message({
                 type: 'success',
                 message: '删除成功！'
               });
-            }
-          });
-          console.log(res);
-        }).catch(err => {
-          console.log(err)
-        })
+              console.log(res);
+            }).catch(err => {
+              console.log(err)
+            })
+          }
+        });
       },
       handleEdit(row){
         // this.form.title = row.title;

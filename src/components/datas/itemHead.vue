@@ -1,7 +1,7 @@
 <style scoped>
   .data-head{
     border: 1px solid #E4E4E4;
-    border-top:3px solid #BDDFE8;
+    border-top:3px solid #426EFF;
     font-size: 14px;
   }
   .head-top{

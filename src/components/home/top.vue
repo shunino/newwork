@@ -9,12 +9,14 @@
   .mytop .top-icon{
       height: 100%;
       width: 400px;
+      display: flex;
+      align-items: center;
   }
 </style>
 <template>
        <div class="mytop">
           <div class="top-icon ml10">
-            <img style="width:100%;height: 100%;" src="../../assets/icon.png">
+            <img src="../../assets/icon1.png">
           </div>
          <div class="top-search mr10">
            <el-input

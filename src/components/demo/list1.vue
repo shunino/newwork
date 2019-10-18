@@ -1,8 +1,8 @@
 <template>
     <div class="mydemo">
       <div class="demo-head">
-          <span class="ml10">专题展示</span>
-          <span class="mr10 pointer" @click="$commonGo('/show')">更多</span>
+          <span class="ml10 xin">专题展示</span>
+          <span class="mr10 pointer mya" @click="$commonGo('/show')">更多>></span>
       </div>
       <div class="demo-content">
           <div  v-for="i in data1" class="demo-list">
@@ -68,8 +68,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background:#009966 ;
+    background:#0C275D ;
     color: white;
+  }
+  .demo-head .xin{
+    font-size: 20px;
   }
   .demo-content{
     display: flex;

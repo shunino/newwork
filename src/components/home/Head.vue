@@ -1,4 +1,5 @@
 <template>
+  <div style="width: 100%;display: flex;justify-content: center;background: #0C275E;">
         <div class="myhead">
               <div class="head-left">
                 <span id="home" class="cur">
@@ -24,14 +25,17 @@
                 </span>
               </div>
               <div class="head-left" v-show="hasLogin">
-                <span style="justify-content: flex-end;margin-right: 5px;">
+                <span style="justify-content: flex-end;margin-right: 5px;color: #00A8FF;">
                   Hi！{{user}}
                 </span>
                 <span id="personal">
-                  <router-link to="/personal">个人中心</router-link>
+                  <router-link style="color:#00A8FF;" to="/personal">个人中心</router-link>
                 </span>
                 <span style="width: 50px;" >
-                  <span @click="lexit">退出</span>
+                  <span @click="lexit" style="    color: #426EFF;
+    border-left: 2px solid #426EFF;
+    width: 50px;
+    height: 38%;">退出</span>
                 </span>
               </div>
               <div class="head-right mr10" v-show="!hasLogin">
@@ -106,6 +110,7 @@
           </el-dialog>
 
         </div>
+  </div>
 </template>
 
 <script>
@@ -258,10 +263,11 @@ export default {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      background: #006633;
-      width: 100%;
-      height: 50px;
+      background: #0C275E;
+      width: 1245px;
+      height: 55px;
       color:white;
+    font-size: 16px;
   }
   .head-left{
     display: flex;
@@ -279,7 +285,7 @@ export default {
     cursor: pointer;
   }
   .head-left span.cur{
-    background: #009900;
+    background: #416EFF;
   }
   .head-left span a{
     width: 100%;
@@ -288,6 +294,7 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    color: white;
   }
   .head-right{
     cursor: pointer;

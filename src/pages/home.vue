@@ -30,10 +30,10 @@
     padding-left: 10px;
   }
   .homeTwo .el-tabs__item.is-active{
-    color: #009966;
+    color: #426EFF;
   }
   .homeTwo .el-tabs__active-bar{
-    background: #009966;
+    background: #426EFF;
   }
 </style>
 <script>

@@ -1,8 +1,20 @@
+<style>
+  .el-tag.el-tag--warning{
+    background: #00A8FF;
+    color: white;
+  }
+  .el-tag{
+    height: 24px;
+    width: 24px;
+    padding: 0px;
+    line-height: 24px;
+  }
+</style>
 <template>
     <div class="myrank">
       <div class="rank-head">
         <span class="ml10">排行榜</span>
-        <span class="mr10"><span @click="change('down')" class="rank-type">下载量</span> <span @click="change('share')"  class="rank-type">分享量</span><span @click="change('score')" style="border-right: none;width: 38px;"  class="rank-type">积分</span> </span>
+        <span class="mr10" style="font-size: 14px;"><span @click="change('down')" class="rank-type">下载量</span> <span @click="change('share')"  class="rank-type">分享量</span><span @click="change('score')" style="border-right: none;width: 50px;"  class="rank-type cur">积分</span> </span>
       </div>
       <div class="rank-content">
         <ul class="rank-ul" style="overflow:auto">
@@ -85,6 +97,7 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
   .myrank{
       width: 99%;
@@ -96,7 +109,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background:#009966 ;
+    background:#0C275D;
     color: white;
   }
   .rank-li{
@@ -123,10 +136,14 @@
     color: gray;
   }
   .rank-type{
-    border-right: 1px solid white;
-    width: 50px;
+    color: #04A5FF;
+    border-right: 1px solid #04A5FF;
+    width: 63px;
     text-align: center;
     display: inline-block;
     cursor: pointer;
+  }
+  .cur{
+    color: white;
   }
 </style>

@@ -2,7 +2,7 @@
   .data-tag{
       display: flex;
       height: 80px;
-        border-top:3px solid #BDDFE8;
+      border-top:3px solid #426EFF;
   }
   .data-tag .tag-left{
       width: 20%;
@@ -33,6 +33,10 @@
     border:1px solid #F2F2F2;
     font-size: 12px;
   }
+  .more{
+    font-size: 14px;
+    color: #77D1FF;
+  }
 </style>
 <template>
   <div>
@@ -41,11 +45,11 @@
         主题间：
       </div>
       <div class="tag-center">
-        <span class="tag-button" style="border:2px solid #CAE088;color: #CAE088;">全部</span>
+        <span class="tag-button" style="background: #416EFF;color: white;">全部</span>
         <span v-for="i in data1" class="tag-button">{{i}}</span>
       </div>
       <div class="tag-right">
-        <span class="el-icon-caret-bottom">更多</span>
+        <span class="more">更多 <img src="../../assets/d3.png"></span>
       </div>
     </div>
 
@@ -54,11 +58,11 @@
         空间位置：
       </div>
       <div class="tag-center">
-        <span class="tag-button" style="border:2px solid #CAE088;color: #CAE088;">全部</span>
+        <span class="tag-button" style="background: #416EFF;color: white;">全部</span>
         <span v-for="i in data2" class="tag-button">{{i}}</span>
       </div>
       <div class="tag-right">
-        <span class="el-icon-caret-bottom">更多</span>
+        <span class="more">更多 <img src="../../assets/d3.png"></span>
       </div>
     </div>
 

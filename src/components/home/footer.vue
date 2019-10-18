@@ -48,29 +48,42 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: #1A7676;
+    background: #0C275E;
     width: 100%;
     height: 90px;
     color:white;
     /*margin-top: 40px;*/
+    font-size: 14px;
+    flex-direction: column;
+    justify-content: center;
   }
   .footer-left{
     display: flex;
-    width: 80%;
     align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    color: #00A8FF;
+    width: 420px;
     justify-content: space-around;
   }
   .footer-left span{
     display: inline-block;
+    color: #00A8FF;
+  }
+  .footer-left span a{
+    display: inline-block;
+    color: #00A8FF;
   }
   .footer-right{
     display: flex;
     flex-direction: column;
-    width: 20%;
     align-items: center;
-    justify-content: space-evenly;
-    border-left: 1px solid white;
-    height: 90%;
+    flex-direction: row;
+    justify-content: center;
+    color: #808080;
+    margin-top: 17px;
+    width: 455px;
+    justify-content: space-around;
   }
 
 </style>

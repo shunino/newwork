@@ -6,46 +6,69 @@
     width: 100%;
     font-size: 13px;
     border: 1px solid #E4E4E4;
-    border-top:3px solid #BDDFE8;
+    border-top:3px solid #426EFF;
   }
   .class-intro{
     height: 40px;
     line-height: 40px;
     padding-left: 10px;
     font-weight: bold;
+    font-size: 20px;
   }
   .class-con .con-head{
     height: 35px;
-    line-height: 35px;
-    padding-left: 10px;
-    background: #E1F4FE;
+    background: #0C275D;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
   }
   .class-con .con-c{
     padding-left: 10px;
     margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
-  .class-con span{
-    display: inline-block;
+  .class-con .con-c span{
+    display: block;
     margin-top: 5px;
+    color: gray;
   }
 </style>
 <template>
   <div class="data-class">
       <div class="class-intro">
-        数据分类体系（<span style="color: red;">全部</span>）
+        数据分类体系
+<!--        （<span style="color: red;">全部</span>）-->
       </div>
     <div class="class-con" v-for="i in mydata">
       <div class="con-head">
-       {{i.head}}（{{Math.ceil(Math.random()*10)}}）
+        <span>{{i.head}}（{{Math.ceil(Math.random()*10)}}）</span>
+        <img class="dataClass" src="../../assets/d2.png">
+        <img style="display: none" class="dataClass1" src="../../assets/d1.png">
       </div>
-      <div class="con-c">
+      <div class="con-c" >
         <span v-for="j in i.mydata" >{{ j }}（{{Math.ceil(Math.random()*10)}}）</span>
       </div>
     </div>
   </div>
 </template>
-
 <script>
+  $(function () {
+        $(document).on('click','.dataClass',function (e) {
+          $(this).parent('.con-head').siblings('.con-c').css({height:'0'});
+          $(this).hide();
+          $(this).siblings('.dataClass1').show();
+        });
+      $(document).on('click','.dataClass1',function (e) {
+        $(this).parent('.con-head').siblings('.con-c').css({height:'auto'});
+        $(this).hide();
+        $(this).siblings('.dataClass').show();
+      });
+  })
+
   export default {
     name: 'list',
     data () {
@@ -97,6 +120,8 @@
           },
         ]
       }
+    },
+    mounted () {
     }
   }
 </script>

@@ -5,8 +5,12 @@
 <!--    height: 100%;-->
 <!--    width: 100%;-->
 <!--    z-index: -1;" src="../static/1.jpg" />-->
-      <top></top>
-      <myhead></myhead>
+    <div style="width: 100%;display: flex;justify-content: center;background: #F9F9F9;">
+      <div style="width: 1245px;background: white;display: flex;justify-content: center;flex-direction: column;">
+        <top></top>
+      </div>
+    </div>
+    <myhead></myhead>
     <div style="width: 100%;display: flex;justify-content: center;background: gainsboro;padding-bottom: 20px;">
       <div style="width: 1245px;background: white;display: flex;justify-content: center;flex-direction: column;padding-bottom: 20px;">
         <router-view/>
@@ -47,6 +51,14 @@ export default {
 }
 </script>
 <style>
+  .el-button--primary{
+    background:#416EFF ;
+    border-color:#416EFF ;
+  }
+   .el-tabs__item{
+     font-size: 16px;
+     color: #666666;
+   }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -117,7 +129,17 @@ export default {
   }
   a{
     text-decoration: none;
-    color: white;
+    color: #00A8FF;
+  }
+  .mya{
+    color: #00A8FF;
+  }
+  .myhead{
+    background: #0C275D;
+    font-size: 20px;
+  }
+  .myborder{
+    border-color: #426EFF;
   }
   ul{
     list-style: none;
@@ -125,6 +147,7 @@ export default {
     margin:0px;
   }
   *{
-    font-size: 14px;
+    /*font-size: 16px;*/
+    font-family: Microsoft YaHei;
   }
 </style>

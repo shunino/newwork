@@ -5,7 +5,7 @@
             <span class="span1"></span>
             <span class="span4">{{i.title}}}</span>
           </li>
-          <li style="margin-top: 19px;"><span @click="$commonGo('/datas')" v-show="data" class="fr mr10 pointer" style="color: gray">更多</span></li>
+          <li style="margin-top: 19px;"><span @click="$commonGo('/datas')" v-show="data" class="fr mr10 pointer mya">更多>></span></li>
         </ul>
       </div>
 </template>
@@ -46,17 +46,17 @@
   }
   .list-li>span{
     font-size: 18px;
-    color: gray;
+    color: #808080;
   }
   .list-li .span1{
     width: 10px;
     height: 10px;
-    background: #828282;
+    background: #CCCCCC;
   }
   .list-li .span4{
     text-overflow: ellipsis;
     overflow-x: hidden;
     white-space: nowrap;
-    margin-left: 5px;
+    margin-left: 13px;
   }
 </style>

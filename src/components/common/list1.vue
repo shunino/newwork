@@ -38,12 +38,12 @@
   }
   .list-li>span{
     font-size: 13px;
-    color: gray;
+    color: #808080;
   }
   .list-li .span1{
     width: 3px;
     height: 3px;
-    background: #828282;
+    background:#CCCCCC;
   }
   .list-li .span4{
     text-overflow: ellipsis;

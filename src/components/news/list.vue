@@ -1,7 +1,8 @@
 <template>
     <div class="mylist">
       <div class="list-head mb10">
-       <span class="ml10">新闻动态</span>
+        <span  class="ml10 xin">新闻动态</span>
+        <span @click="$commonGo('/news')" class="mya">更多新闻>></span>
       </div>
       <div class="list-content">
         <ul class="list-ul" style="overflow:auto">
@@ -10,7 +11,7 @@
             <span class="span4 ml10">{{i.title}}</span>
           </li>
         </ul>
-        <div class="fr pointer" @click="$commonGo('/news')">更多新闻</div>
+<!--        <div class="fr pointer" @click="$commonGo('/news')">更多新闻</div>-->
       </div>
     </div>
 </template>
@@ -80,13 +81,13 @@
     display: flex;
     align-items: center;
     color: black;
-    border-bottom: 3px solid #009966;
-
+    border-bottom: 3px solid #426EFF;
+    justify-content: space-between;
   }
-  .list-head span{
+  .list-head .xin{
     color: black;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
   }
   .list-li{
     display: flex;
@@ -94,6 +95,8 @@
     align-items: center;
     margin-top: 7px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .list-li .span1{
   }
@@ -103,5 +106,7 @@
   }
   .list-li .span4{
     margin-left: 30px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 </style>
